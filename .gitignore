@@ -1,0 +1,44 @@
+### main template
+# Python
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+.Python
+env/
+.venv
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Django
+*.log
+*.pot
+*.py[cod]
+*.sqlite3
+migrations/*
+!migrations/__init__.py
+
+# Secrets
+.env
+*.env
+*.secret
+*.key
+
+# IDE
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# Static and media
+/staticfiles/
+/media/
+
+# MacOS
+.DS_Store
+
+# Windows
+Thumbs.db
+Desktop.ini

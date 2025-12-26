@@ -1,0 +1,22 @@
+[project]
+name = "recipehub"
+version = "0.1.0"
+description = "Add your description here"
+requires-python = ">=3.12"
+dependencies = [
+    "django>=6.0",
+    "python-decouple>=3.8",
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff"
+]
+
+[tool.ruff]
+exclude = [
+    ".git",
+    ".venv",
+    "migrations",
+    "__pycache__",
+]
