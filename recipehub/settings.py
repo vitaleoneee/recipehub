@@ -24,6 +24,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    # Registration of manual applications
+    "recipehub.apps.recipes.apps.RecipesConfig",
 ]
 
 MIDDLEWARE = [
