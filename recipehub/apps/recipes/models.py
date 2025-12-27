@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.utils.text import slugify
@@ -14,7 +15,9 @@ class Recipe(models.Model):
     slug = models.SlugField(max_length=255, unique=True, blank=True)
     announcement_text = models.TextField(blank=True)
     photo = models.ImageField(upload_to=recipe_photo_upload_to, blank=True, null=True)
-    ingredients = models.TextField()
+    ingredients = models.TextField(
+        help_text="Enter each ingredient on a new line and in the following order: ingredient name - quantity.",
+        blank=True)
     recipe_text = models.TextField(blank=True, help_text="The text of the recipe")
     servings = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(100)])
     cooking_time = models.IntegerField(blank=True, null=True, validators=[MinValueValidator(1)],
@@ -39,3 +42,34 @@ class Recipe(models.Model):
         if not self.slug:
             self.slug = slugify(self.name)
         super().save(*args, **kwargs)
+
+    def clean(self):
+        if not self.ingredients:
+            return
+
+        normalized_lines = []
+        lines = self.ingredients.splitlines()
+
+        for line in lines:
+            try:
+                name, quantity = map(str.strip, line.split('-', 1))
+            except ValueError:
+                raise ValidationError({
+                    "ingredients": (
+                        "Each line must be in format: ingredient - quantity"
+                    )
+                })
+
+            if not name.replace(" ", "").isalpha():
+                raise ValidationError({
+                    "ingredients": f"Invalid ingredient name: {name}"
+                })
+
+            if not quantity:
+                raise ValidationError({
+                    "ingredients": f"Quantity is missing for ingredient: {name}"
+                })
+
+            normalized_lines.append(f"{name.lower()} - {quantity}")
+
+        self.ingredients = "\n".join(normalized_lines)
