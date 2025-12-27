@@ -30,9 +30,9 @@ def compress_images(image):
 
 def valid_extension(filename):
     ext = filename.lower()
-    if ext.endswith('.jpg') or ext.endswith('.jpeg'):
+    if ext.endswith(".jpg") or ext.endswith(".jpeg"):
         return "JPEG"
-    elif ext.endswith('.png'):
+    elif ext.endswith(".png"):
         return "PNG"
     else:
         raise ValueError("Unsupported image format")
@@ -40,7 +40,7 @@ def valid_extension(filename):
 
 def recipe_photo_upload_to(instance, filename):
     """
-        Save recipe photo in the folder media/recipes/<username>/<filename>
+    Save recipe photo in the folder media/recipes/<username>/<filename>
     """
     user_username = instance.user.username
     return f"recipes/{user_username}-{instance.slug}"

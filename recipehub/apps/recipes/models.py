@@ -17,18 +17,29 @@ class Recipe(models.Model):
     photo = models.ImageField(upload_to=recipe_photo_upload_to, blank=True, null=True)
     ingredients = models.TextField(
         help_text="Enter each ingredient on a new line and in the following order: ingredient name - quantity.",
-        blank=True)
+        blank=True,
+    )
     recipe_text = models.TextField(blank=True, help_text="The text of the recipe")
-    servings = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(100)])
-    cooking_time = models.IntegerField(blank=True, null=True, validators=[MinValueValidator(1)],
-                                       help_text="Cooking time in minutes")
+    servings = models.IntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(100)]
+    )
+    cooking_time = models.IntegerField(
+        blank=True,
+        null=True,
+        validators=[MinValueValidator(1)],
+        help_text="Cooking time in minutes",
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     approved = models.BooleanField(default=False)
-    calories = models.IntegerField(blank=True, null=True, validators=[MinValueValidator(0)],
-                                   help_text="Calories per serving")
+    calories = models.IntegerField(
+        blank=True,
+        null=True,
+        validators=[MinValueValidator(0)],
+        help_text="Calories per serving",
+    )
 
     class Meta:
-        ordering = ['name']
+        ordering = ["name"]
 
     def __str__(self):
         return f'"{self.name}" from {self.user.username}'
@@ -52,23 +63,25 @@ class Recipe(models.Model):
 
         for line in lines:
             try:
-                name, quantity = map(str.strip, line.split('-', 1))
+                name, quantity = map(str.strip, line.split("-", 1))
             except ValueError:
-                raise ValidationError({
-                    "ingredients": (
-                        "Each line must be in format: ingredient - quantity"
-                    )
-                })
+                raise ValidationError(
+                    {
+                        "ingredients": (
+                            "Each line must be in format: ingredient - quantity"
+                        )
+                    }
+                )
 
             if not name.replace(" ", "").isalpha():
-                raise ValidationError({
-                    "ingredients": f"Invalid ingredient name: {name}"
-                })
+                raise ValidationError(
+                    {"ingredients": f"Invalid ingredient name: {name}"}
+                )
 
             if not quantity:
-                raise ValidationError({
-                    "ingredients": f"Quantity is missing for ingredient: {name}"
-                })
+                raise ValidationError(
+                    {"ingredients": f"Quantity is missing for ingredient: {name}"}
+                )
 
             normalized_lines.append(f"{name.lower()} - {quantity}")
 
