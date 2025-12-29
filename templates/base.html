@@ -4,147 +4,193 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
     {% block title %}
         <title>RecipeHub</title>
     {% endblock title %}
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
+
 <body class="d-flex flex-column min-vh-100">
 
 <!-- Header -->
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
-    <div class="container-fluid">
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo01"
-                aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+    <div class="container">
+
+        <a class="navbar-brand fw-bold fs-4 logo" href="{% url 'recipes:index' %}">
+            <i class="fa-solid fa-utensils me-1"></i> RecipeHub
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarMain">
             <span class="navbar-toggler-icon"></span>
         </button>
 
-        <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
-            <a class="navbar-brand fw-bold fs-4" href="#" style="color: #ff6b00;">
-                <i class="fa-solid fa-utensils me-1"></i> RecipeHub
-            </a>
+        <div class="collapse navbar-collapse" id="navbarMain">
 
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <ul class="navbar-nav me-auto">
                 <li class="nav-item"><a class="nav-link active" href="#">Home</a></li>
                 <li class="nav-item"><a class="nav-link" href="#">Recipes</a></li>
                 <li class="nav-item"><a class="nav-link" href="#">Add Recipe</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Recipe Builder <span
-                        class="badge bg-danger">New</span></a></li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        Recipe Builder <span class="badge bg-danger">New</span>
+                    </a>
+                </li>
             </ul>
 
-            <form class="d-flex me-2" role="search">
-                <input class="form-control me-2" type="search" placeholder="Search Recipe" aria-label="Search"/>
-                <button class="btn btn-outline-success" type="submit">Search</button>
+            <form class="d-flex me-3">
+                <input class="form-control me-2" type="search" placeholder="Search recipe">
+                <button class="btn btn-outline-success">Search</button>
             </form>
 
-            <div class="btn-group me-2">
-                <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+            <div class="dropdown">
+                <button class="btn dropdown-toggle" data-bs-toggle="dropdown">
                     <i class="fa-solid fa-user"></i>
                 </button>
-                <ul class="dropdown-menu dropdown-menu-end">
-                    <li><a class="dropdown-item" href="#"><i class="fa-solid fa-database"></i> My personal data</a></li>
-                    <li><a class="dropdown-item" href="#"><i class="fa-solid fa-bookmark"></i> Saved Recipes</a></li>
-                    <li><a class="dropdown-item" href="#"><i class="fa-solid fa-pizza-slice"></i> My Recipes</a></li>
+                <ul class="dropdown-menu dropdown-menu-end end-0">
+                    <li><a class="dropdown-item" href="#">My profile</a></li>
+                    <li><a class="dropdown-item" href="#">Saved recipes</a></li>
                     <li>
                         <hr class="dropdown-divider">
                     </li>
-                    <li><a class="dropdown-item" href="#"><i class="fa-solid fa-arrow-right-from-bracket"></i>
-                        Logout</a></li>
+                    <li><a class="dropdown-item" href="#">Logout</a></li>
                 </ul>
             </div>
+
         </div>
     </div>
 </nav>
 
-<!-- Main content -->
-<div class="container mt-4 flex-grow-1">
-    <div class="row">
-        <!-- Left content -->
-        <div class="col-lg-8 col-12 mb-3">
-            {% block content %}
-            {% endblock content %}
+<!-- Main -->
+<main class="container my-4 flex-grow-1">
+    <div class="row g-4 align-items-stretch">
+
+        <!-- Content -->
+        <div class="col-lg-8 d-flex">
+            <div class="w-100">
+                {% block content %}
+                {% endblock content %}
+            </div>
         </div>
-        {% block sidebar %}
-            <!-- Sidebar -->
-            <div class="col-lg-4 col-12 d-flex justify-content-center mb-3">
-                <div class="p-3 bg-light border rounded w-100">
-                    <div class="text-center">
-                        <h4 class="mb-3">Best Recipes ⭐</h4>
-                        <div class="row g-3 justify-content-center">
-                            <!-- Card 1 -->
-                            <div class="col-6">
-                                <div class="card h-100">
-                                    <img src="#" class="card-img-top" alt="Pizza">
-                                    <div class="card-body">
-                                        <h5 class="card-title">Pizza</h5>
-                                        <p class="card-text">Delicious pizza with cheese and tomatoes.</p>
-                                        <a href="#" class="btn btn-sm btn-orange">More</a>
-                                    </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4 d-flex">
+            <aside class="sidebar d-flex flex-column w-100">
+
+                <!-- Top block -->
+                <div class="sidebar-block mb-3">
+                    <h5 class="text-center mb-3">Best Recipes ⭐</h5>
+
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <div class="card h-100">
+                                <img src="{% static 'img/pizza.jpg' %}" class="card-img-top" alt="Pizza">
+                                <div class="card-body text-center p-2">
+                                    <h6 class="mb-1">Pizza</h6>
+                                    <a href="#" class="btn btn-sm btn-orange">More</a>
                                 </div>
                             </div>
+                        </div>
 
-                            <!-- Card 2 -->
-                            <div class="col-6">
-                                <div class="card h-100">
-                                    <img src="#" class="card-img-top" alt="Sushi">
-                                    <div class="card-body">
-                                        <h5 class="card-title">Sushi</h5>
-                                        <p class="card-text">Fresh sushi with salmon and avocado.</p>
-                                        <a href="#" class="btn btn-sm btn-orange">More</a>
-                                    </div>
+                        <div class="col-6">
+                            <div class="card h-100">
+                                <img src="{% static 'img/sushi.jpg' %}" class="card-img-top" alt="Sushi">
+                                <div class="card-body text-center p-2">
+                                    <h6 class="mb-1">Sushi</h6>
+                                    <a href="#" class="btn btn-sm btn-orange">More</a>
                                 </div>
                             </div>
+                        </div>
 
-                            <!-- Card 3 -->
-                            <div class="col-6">
-                                <div class="card h-100">
-                                    <img src="#" class="card-img-top" alt="Borsh">
-                                    <div class="card-body">
-                                        <h5 class="card-title">Borsh</h5>
-                                        <p class="card-text">Classic borsh with meat and beets.</p>
-                                        <a href="#" class="btn btn-sm btn-orange">More</a>
-                                    </div>
+                        <div class="col-6">
+                            <div class="card h-100">
+                                <img src="{% static 'img/borsh.jpg' %}" class="card-img-top" alt="Borsh">
+                                <div class="card-body text-center p-2">
+                                    <h6 class="mb-1">Borsh</h6>
+                                    <a href="#" class="btn btn-sm btn-orange">More</a>
                                 </div>
                             </div>
+                        </div>
 
-                            <!-- Card 4 -->
-                            <div class="col-6">
-                                <div class="card h-100">
-                                    <img src="#" class="card-img-top" alt="Pasta">
-                                    <div class="card-body">
-                                        <h5 class="card-title">Pasta</h5>
-                                        <p class="card-text">Italian pasta with Bolognese sauce.</p>
-                                        <a href="#" class="btn btn-sm btn-orange">More</a>
-                                    </div>
+                        <div class="col-6">
+                            <div class="card h-100">
+                                <img src="{% static 'img/pasta.jpg' %}" class="card-img-top" alt="Pasta">
+                                <div class="card-body text-center p-2">
+                                    <h6 class="mb-1">Pasta</h6>
+                                    <a href="#" class="btn btn-sm btn-orange">More</a>
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
-            </div>
-        {% endblock sidebar %}
+
+                <!-- Medium block -->
+                <div class="sidebar-block mt-auto text-center">
+                    <h5 class="mb-2">Cook. Share. Inspire. 🍳✨</h5>
+
+                    <p class="small text-muted mb-3">
+                        Share your cooking moments!
+                        Post photos and videos with
+                        <strong>#RecipeHub</strong> and inspire others.
+                    </p>
+
+                    <div class="d-flex justify-content-center gap-3 mb-3">
+                        <i class="fab fa-instagram fa-lg text-danger"></i>
+                        <i class="fab fa-tiktok fa-lg text-dark"></i>
+                        <i class="fab fa-youtube fa-lg text-danger"></i>
+                    </div>
+
+                    <h6 class="mb-2">Join the community!</h6>
+                </div>
+                <!-- Carousel block -->
+                <div id="carouselExample" class="sidebar-block mt-auto text-center carousel slide">
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            <img src="static/images/food.jpg" class="d-block w-100" alt="...">
+                        </div>
+                        <div class="carousel-item">
+                            <img src="static/images/pizza.jpg" class="d-block w-100" alt="...">
+                        </div>
+                        <div class="carousel-item">
+                            <img src="static/images/sushi.jpg" class="d-block w-100" alt="...">
+                        </div>
+                        <div class="carousel-item">
+                            <img src="static/images/cake.jpg" class="d-block w-100" alt="...">
+                        </div>
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample"
+                            data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExample"
+                            data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+
+            </aside>
+        </div>
+
     </div>
-</div>
+</main>
 
 <!-- Footer -->
 <footer class="bg-dark text-light mt-auto">
-    <div class="container py-1 text-center">
-        <h5 class="mb-3">RecipeHub</h5>
+    <div class="container py-1 text-center"><h5 class="mb-3">RecipeHub</h5>
         <p class="mb-2">Your favorite recipes, all in one place.</p>
-        <div class="mb-3">
-            <a href="#" class="text-light me-3"><i class="fab fa-facebook fa-lg"></i></a>
-            <a href="#" class="text-light me-3"><i class="fab fa-twitter fa-lg"></i></a>
-            <a href="#" class="text-light me-3"><i class="fab fa-instagram fa-lg"></i></a>
-            <a href="#" class="text-light"><i class="fab fa-pinterest fa-lg"></i></a>
-        </div>
-        <small>&copy; 2026 RecipeHub. All rights reserved.</small>
-    </div>
+        <div class="mb-3"><a href="#" class="text-light me-3"><i class="fab fa-facebook fa-lg"></i></a> <a href="#"
+                                                                                                           class="text-light me-3"><i
+                class="fab fa-twitter fa-lg"></i></a> <a href="#" class="text-light me-3"><i
+                class="fab fa-instagram fa-lg"></i></a> <a href="#" class="text-light"><i
+                class="fab fa-pinterest fa-lg"></i></a></div>
+        <small>&copy; 2026 RecipeHub. All rights reserved.</small></div>
 </footer>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
         crossorigin="anonymous"></script>

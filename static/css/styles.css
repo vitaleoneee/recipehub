@@ -1,3 +1,7 @@
+.logo {
+    color: #e65a00;
+}
+
 .btn-orange {
     background-color: #f79f4d;
     color: #fff;
@@ -7,4 +11,38 @@
 .btn-orange:hover {
     color: #fff;
     background-color: #e65a00;
+}
+
+.navbar-brand.logo {
+    color: #ff6b00;
+    text-decoration: none;
+}
+
+.navbar-brand.logo {
+    color: #ff6b00;
+    text-decoration: none;
+    transition: color 0.2s ease-in-out;
+}
+
+.navbar-brand.logo:hover {
+    color: #f79f4d;
+}
+
+.navbar-brand.logo:active,
+.navbar-brand.logo:focus {
+    color: #ff6b00;
+}
+
+.sidebar {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 0.5rem;
+    padding: 1rem;
+}
+
+.sidebar-block {
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 0.5rem;
+    padding: 1rem;
 }

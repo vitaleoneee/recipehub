@@ -4,5 +4,5 @@ from recipehub.apps.recipes.views import index
 
 app_name = "recipes"
 urlpatterns = [
-    path("", index, name="hello"),
+    path("", index, name="index"),
 ]
