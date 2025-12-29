@@ -1,14 +1,20 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Bootstrap demo</title>
+    {% block title %}
+        <title>RecipeHub</title>
+    {% endblock title %}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
+
+<!-- Header -->
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
     <div class="container-fluid">
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo01"
@@ -49,18 +55,95 @@
                         Logout</a></li>
                 </ul>
             </div>
-
-            {# Block for unregistered users #}
-            {#            <ul class="navbar-nav mb-2 mb-lg-0">#}
-            {#                <li class="nav-item"><a class="nav-link" href="#">Login</a></li>#}
-            {#                <li class="nav-item"><span class="nav-link">or</span></li>#}
-            {#                <li class="nav-item"><a class="nav-link" href="#">Register</a></li>#}
-            {#            </ul>#}
-
         </div>
     </div>
 </nav>
 
+<!-- Main content -->
+<div class="container mt-4 flex-grow-1">
+    <div class="row">
+        <!-- Left content -->
+        <div class="col-lg-8 col-12 mb-3">
+            {% block content %}
+            {% endblock content %}
+        </div>
+        {% block sidebar %}
+            <!-- Sidebar -->
+            <div class="col-lg-4 col-12 d-flex justify-content-center mb-3">
+                <div class="p-3 bg-light border rounded w-100">
+                    <div class="text-center">
+                        <h4 class="mb-3">Best Recipes ⭐</h4>
+                        <div class="row g-3 justify-content-center">
+                            <!-- Card 1 -->
+                            <div class="col-6">
+                                <div class="card h-100">
+                                    <img src="#" class="card-img-top" alt="Pizza">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Pizza</h5>
+                                        <p class="card-text">Delicious pizza with cheese and tomatoes.</p>
+                                        <a href="#" class="btn btn-sm btn-orange">More</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Card 2 -->
+                            <div class="col-6">
+                                <div class="card h-100">
+                                    <img src="#" class="card-img-top" alt="Sushi">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Sushi</h5>
+                                        <p class="card-text">Fresh sushi with salmon and avocado.</p>
+                                        <a href="#" class="btn btn-sm btn-orange">More</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Card 3 -->
+                            <div class="col-6">
+                                <div class="card h-100">
+                                    <img src="#" class="card-img-top" alt="Borsh">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Borsh</h5>
+                                        <p class="card-text">Classic borsh with meat and beets.</p>
+                                        <a href="#" class="btn btn-sm btn-orange">More</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Card 4 -->
+                            <div class="col-6">
+                                <div class="card h-100">
+                                    <img src="#" class="card-img-top" alt="Pasta">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Pasta</h5>
+                                        <p class="card-text">Italian pasta with Bolognese sauce.</p>
+                                        <a href="#" class="btn btn-sm btn-orange">More</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endblock sidebar %}
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="bg-dark text-light mt-auto">
+    <div class="container py-1 text-center">
+        <h5 class="mb-3">RecipeHub</h5>
+        <p class="mb-2">Your favorite recipes, all in one place.</p>
+        <div class="mb-3">
+            <a href="#" class="text-light me-3"><i class="fab fa-facebook fa-lg"></i></a>
+            <a href="#" class="text-light me-3"><i class="fab fa-twitter fa-lg"></i></a>
+            <a href="#" class="text-light me-3"><i class="fab fa-instagram fa-lg"></i></a>
+            <a href="#" class="text-light"><i class="fab fa-pinterest fa-lg"></i></a>
+        </div>
+        <small>&copy; 2026 RecipeHub. All rights reserved.</small>
+    </div>
+</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
