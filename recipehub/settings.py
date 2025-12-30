@@ -30,6 +30,9 @@ INSTALLED_APPS = [
     "recipehub.apps.users.apps.UsersConfig",
     # Other
     "django_cleanup.apps.CleanupConfig",
+    "widget_tweaks",
+    'allauth',
+    'allauth.account',
 ]
 
 MIDDLEWARE = [
@@ -40,6 +43,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "allauth.account.middleware.AccountMiddleware",
 ]
 
 ROOT_URLCONF = "recipehub.urls"
@@ -95,6 +99,13 @@ AUTH_PASSWORD_VALIDATORS = [
 
 AUTH_USER_MODEL = "users.User"
 
+AUTHENTICATION_BACKENDS = [
+    # Needed to log in by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+    # `allauth` specific authentication methods, such as login by email
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
@@ -124,3 +135,5 @@ JAZZMIN_SETTINGS = {
     "welcome_sign": "Welcome to RecipeHub admin panel!",
     "copyright": "vitaleoneee",
 }
+
+ACCOUNT_FORMS = {'signup': 'recipehub.apps.users.forms.CustomSignupForm'}

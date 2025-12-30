@@ -1,8 +1,8 @@
 from django.urls import path
 
-from recipehub.apps.recipes.views import index
+from recipehub.apps.recipes import views
 
 app_name = "recipes"
 urlpatterns = [
-    path("", index, name="index"),
+    path("", views.index, name="index"),
 ]

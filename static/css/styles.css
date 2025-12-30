@@ -13,6 +13,7 @@
     background-color: #e65a00;
 }
 
+
 .navbar-brand.logo {
     color: #ff6b00;
     text-decoration: none;
@@ -45,4 +46,9 @@
     border: 1px solid #e0e0e0;
     border-radius: 0.5rem;
     padding: 1rem;
+}
+
+.form-block {
+    width: 100%;
+    max-width: 400px;
 }
