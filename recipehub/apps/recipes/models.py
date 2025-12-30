@@ -24,7 +24,9 @@ class Category(models.Model):
 
 class Recipe(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="recipes")
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="recipes")
+    category = models.ForeignKey(
+        Category, on_delete=models.CASCADE, related_name="recipes"
+    )
     name = models.CharField(max_length=100)
     slug = models.SlugField(max_length=255, unique=True, blank=True)
     announcement_text = models.TextField(blank=True)
@@ -59,6 +61,7 @@ class Recipe(models.Model):
         return f'"{self.name}" from {self.user.username}'
 
     def save(self, *args, **kwargs):
+        # Compress images
         if self.photo and not hasattr(self.photo, "_compressed"):
             new_photo = compress_images(self.photo)
             new_photo._compressed = True

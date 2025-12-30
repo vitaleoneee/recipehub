@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     # Registration of manual applications
     "recipehub.apps.recipes.apps.RecipesConfig",
+    "recipehub.apps.users.apps.UsersConfig",
     # Other
     "django_cleanup.apps.CleanupConfig",
 ]
@@ -91,6 +92,8 @@ AUTH_PASSWORD_VALIDATORS = [
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
+
+AUTH_USER_MODEL = "users.User"
 
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/

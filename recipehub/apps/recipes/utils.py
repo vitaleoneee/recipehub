@@ -1,3 +1,6 @@
+import os
+import uuid
+
 from io import BytesIO
 from PIL import Image
 from django.core.files import File
@@ -38,9 +41,17 @@ def valid_extension(filename):
         raise ValueError("Unsupported image format")
 
 
+def user_photo_upload_to(instance, filename):
+    """
+    Save user photo in the folder - media/user-photo/<filename>
+    """
+    ext = os.path.splitext(filename)[1].lower()
+    return f"user-photo/{instance.username}{ext}"
+
+
 def recipe_photo_upload_to(instance, filename):
     """
-    Save recipe photo in the folder media/recipes/<username>/<filename>
+    Save recipe photo in the folder - media/recipes/<filename>
     """
-    user_username = instance.user.username
-    return f"recipes/{user_username}-{instance.slug}"
+    ext = os.path.splitext(filename)[1].lower()
+    return f"recipes/{instance.user.username}/{instance.slug}/{uuid.uuid4()}{ext}"
