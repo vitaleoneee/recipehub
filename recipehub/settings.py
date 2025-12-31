@@ -136,4 +136,12 @@ JAZZMIN_SETTINGS = {
     "copyright": "vitaleoneee",
 }
 
-ACCOUNT_FORMS = {'signup': 'recipehub.apps.users.forms.CustomSignupForm'}
+ACCOUNT_FORMS = {
+    'signup': 'recipehub.apps.users.forms.CustomSignupForm'
+}
+
+LOGIN_REDIRECT_URL = "/"
+LOGOUT_REDIRECT_URL = "/"
+ACCOUNT_LOGOUT_ON_GET = True
+ACCOUNT_LOGIN_METHODS = {"username", "email"}
+ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = True

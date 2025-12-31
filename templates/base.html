@@ -53,12 +53,12 @@
                         <i class="fa-solid fa-user"></i>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end end-0">
-                        <li><a class="dropdown-item" href="{% url 'users:profile' %}">My profile</a></li>
+                        <li><a class="dropdown-item" href="{% url 'profile' %}">My profile</a></li>
                         <li><a class="dropdown-item" href="#">Saved recipes</a></li>
                         <li>
                             <hr class="dropdown-divider">
                         </li>
-                        <li><a class="dropdown-item" href="#">Logout</a></li>
+                        <li><a class="dropdown-item" href="{% url 'account_logout' %}">Logout</a></li>
                     </ul>
                 </div>
             {% else %}
