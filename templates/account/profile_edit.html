@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    <title>Edit Profile - {{ request.user.username }}</title>
+{% endblock title %}
+
+{% block content %}
+    <div class="card mb-4 mx-auto profile-card">
+        <div class="card-header">
+            <h5 class="mb-0">Edit Profile</h5>
+        </div>
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <!-- Non-field errors -->
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {% for error in form.non_field_errors %}
+                            <div>{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <!-- Avatar preview -->
+                <div class="mb-4 text-center">
+                    {% if request.user.photo %}
+                        <img src="{{ request.user.photo.url }}"
+                             class="rounded-circle mb-3"
+                             alt="Avatar"
+                             style="width: 100px; height: 100px; object-fit: cover; object-position: center;">
+                    {% else %}
+                        <img src="{% static 'images/no-avatar.jpg' %}" class="rounded-circle mb-3" alt="Avatar"
+                             width="120" height="120">
+                    {% endif %}
+                    <div class="mb-2">
+                        <label for="id_photo" class="form-label">Change Avatar</label>
+                        <input type="file" name="photo" id="id_photo" class="form-control">
+                    </div>
+                    <small class="text-muted">Upload a new avatar (optional)</small>
+                </div>
+
+                <!-- Username -->
+                <div class="mb-3">
+                    <label for="id_username" class="form-label">Username</label>
+                    <input type="text" name="username" id="id_username" class="form-control"
+                           value="{{ form.username.value|default:request.user.username }}">
+                    {% if form.username.errors %}
+                        <div class="text-danger mt-1">
+                            {% for error in form.username.errors %}
+                                {{ error }}<br>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Email -->
+                <div class="mb-3">
+                    <label for="id_email" class="form-label">Email</label>
+                    <input type="email" name="email" id="id_email" class="form-control"
+                           value="{{ form.email.value|default:request.user.email }}">
+                    {% if form.email.errors %}
+                        <div class="text-danger mt-1">
+                            {% for error in form.email.errors %}
+                                {{ error }}<br>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Date of Birth -->
+                <div class="mb-3">
+                    <label for="id_date_of_birth" class="form-label">Date of Birth</label>
+                    <input type="date" name="date_of_birth" id="id_date_of_birth" class="form-control"
+                           value="{{ form.date_of_birth.value|default:request.user.date_of_birth|date:'Y-m-d' }}">
+                    {% if form.date_of_birth.errors %}
+                        <div class="text-danger mt-1">
+                            {% for error in form.date_of_birth.errors %}
+                                {{ error }}<br>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Buttons -->
+                <div class="d-flex justify-content-between mt-4">
+                    <a href="{% url 'profile' %}" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-orange">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock content %}

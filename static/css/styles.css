@@ -66,3 +66,7 @@
 .form-check-input {
     border-color: #fd7e14;
 }
+
+.profile-card {
+    max-width: 600px;
+}

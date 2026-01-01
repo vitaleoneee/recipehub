@@ -23,6 +23,7 @@ class CustomSignupForm(SignupForm):
 
     def save(self, request):
         user = super().save(request)
-        user.date_of_birth = self.cleaned_data["date_of_birth"]
+        user.date_of_birth = self.cleaned_data.get("date_of_birth")
+        user.photo = self.cleaned_data.get("photo")
         user.save()
         return user

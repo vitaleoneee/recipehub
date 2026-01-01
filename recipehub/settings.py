@@ -33,7 +33,6 @@ INSTALLED_APPS = [
     "widget_tweaks",
     "allauth",
     "allauth.account",
-    "easy_thumbnails",
 ]
 
 MIDDLEWARE = [
@@ -144,3 +143,5 @@ LOGOUT_REDIRECT_URL = "/"
 ACCOUNT_LOGOUT_ON_GET = True
 ACCOUNT_LOGIN_METHODS = {"username", "email"}
 ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = True
+ACCOUNT_EMAIL_VERIFICATION = "none"
+ACCOUNT_EMAIL_REQUIRED = False
