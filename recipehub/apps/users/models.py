@@ -4,16 +4,20 @@ from recipehub.apps.recipes.utils import compress_images, user_photo_upload_to
 
 
 class UserRecipeFavorite(models.Model):
-    user = models.ForeignKey('users.User', on_delete=models.CASCADE)
-    recipe = models.ForeignKey('recipes.Recipe', on_delete=models.CASCADE)
+    user = models.ForeignKey("users.User", on_delete=models.CASCADE)
+    recipe = models.ForeignKey("recipes.Recipe", on_delete=models.CASCADE)
     added_at = models.DateTimeField(auto_now_add=True)
 
 
 class User(AbstractUser):
     date_of_birth = models.DateField(null=True, blank=True)
     photo = models.ImageField(upload_to=user_photo_upload_to, null=True, blank=True)
-    favorites = models.ManyToManyField('recipes.Recipe', through='UserRecipeFavorite', blank=True,
-                                       related_name="favourites")
+    favorites = models.ManyToManyField(
+        "recipes.Recipe",
+        through="UserRecipeFavorite",
+        blank=True,
+        related_name="favourites",
+    )
 
     def save(self, *args, **kwargs):
         # Delete old photo if new photo was added

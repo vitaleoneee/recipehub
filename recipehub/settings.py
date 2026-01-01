@@ -31,8 +31,9 @@ INSTALLED_APPS = [
     # Other
     "django_cleanup.apps.CleanupConfig",
     "widget_tweaks",
-    'allauth',
-    'allauth.account',
+    "allauth",
+    "allauth.account",
+    "easy_thumbnails",
 ]
 
 MIDDLEWARE = [
@@ -101,9 +102,9 @@ AUTH_USER_MODEL = "users.User"
 
 AUTHENTICATION_BACKENDS = [
     # Needed to log in by username in Django admin, regardless of `allauth`
-    'django.contrib.auth.backends.ModelBackend',
+    "django.contrib.auth.backends.ModelBackend",
     # `allauth` specific authentication methods, such as login by email
-    'allauth.account.auth_backends.AuthenticationBackend',
+    "allauth.account.auth_backends.AuthenticationBackend",
 ]
 
 # Internationalization
@@ -123,8 +124,8 @@ USE_TZ = True
 STATIC_URL = "static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 
-MEDIA_ROOT = BASE_DIR / "media"
 MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
 
 JAZZMIN_SETTINGS = {
     "site_title": "RH",
@@ -136,9 +137,7 @@ JAZZMIN_SETTINGS = {
     "copyright": "vitaleoneee",
 }
 
-ACCOUNT_FORMS = {
-    'signup': 'recipehub.apps.users.forms.CustomSignupForm'
-}
+ACCOUNT_FORMS = {"signup": "recipehub.apps.users.forms.CustomSignupForm"}
 
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
