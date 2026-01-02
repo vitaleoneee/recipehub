@@ -36,10 +36,10 @@
                     {% endif %}
                     <p class="small text-muted">Member since {{ request.user.date_joined }}</p>
                 </div>
-
-                <!-- Edit button -->
-                <div class="col-auto">
+                <!-- Edit and Change password buttons -->
+                <div class="col-auto d-flex flex-column gap-2">
                     <a href="{% url "profile-edit" request.user.pk %}" class="btn btn-orange">Edit Profile</a>
+                    <a href="{% url "account_change_password" %}" class="btn btn-orange">Change password</a>
                 </div>
             </div>
         </div>
