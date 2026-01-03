@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}
+    <title>Verify Your Email - RecipeHub</title>
+{% endblock title %}
+
+{% block content %}
+    <div class="card shadow-sm p-4">
+        <h2 class="mb-3">Verify Your Email Address</h2>
+        <p>
+            We have sent an email to you for verification. Follow the link provided to finalize the signup process.
+            If you do not see the verification email in your main inbox, check your spam folder.
+            Please contact us if you do not receive the verification email within a few minutes.
+        </p>
+        <a href="{% url 'account_login' %}" class="btn btn-orange mt-3">Back to Login</a>
+    </div>
+{% endblock content %}

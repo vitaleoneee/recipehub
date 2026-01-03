@@ -1,0 +1,5 @@
+Hi {{ user.username }}!
+
+Please confirm your email address by following the link below:
+
+{{ activate_url }}
