@@ -157,5 +157,5 @@ ACCOUNT_LOGOUT_ON_GET = True
 ACCOUNT_LOGIN_METHODS = {"username", "email"}
 ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = True
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
-ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_SIGNUP_FIELDS = ['username*', 'password1*', 'password2*', 'email*', 'photo', 'date_of_birth']
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
