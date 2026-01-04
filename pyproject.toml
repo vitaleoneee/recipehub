@@ -19,7 +19,8 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "ruff",
-    "ipython"
+    "ipython",
+    "flower>=2.0.1",
 ]
 
 [tool.ruff]

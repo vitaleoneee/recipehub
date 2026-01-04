@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load account %}
+
+{% block title %}
+    <title>Confirm Email Address - RecipeHub</title>
+{% endblock title %}
+
+{% block content %}
+    <div class="card shadow-sm p-4">
+        <h2 class="mb-3">Confirm Email Address</h2>
+
+        {% if confirmation %}
+            {% user_display confirmation.email_address.user as user_display %}
+            {% if can_confirm %}
+                <p>
+                    Please confirm that <a
+                        href="mailto:{{ confirmation.email_address.email }}">{{ confirmation.email_address.email }}</a>
+                    is an email address for user {{ user_display }}.
+                </p>
+
+                {% url 'account_confirm_email' confirmation.key as action_url %}
+                <form method="post" action="{{ action_url }}">
+                    {% csrf_token %}
+                    {{ redirect_field }}
+                    <button type="submit" class="btn btn-orange mt-2">Confirm</button>
+                </form>
+            {% else %}
+                <p>
+                    Unable to confirm this email because it is already confirmed by a different account.
+                </p>
+            {% endif %}
+        {% else %}
+            {% url 'account_email' as email_url %}
+            <p>
+                This email confirmation link expired or is invalid.
+                Please <a href="{{ email_url }}">issue a new email confirmation request</a>.
+            </p>
+        {% endif %}
+
+        <a href="{% url 'account_login' %}" class="btn btn-orange mt-3">Back to Login</a>
+    </div>
+{% endblock content %}
