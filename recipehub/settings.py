@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     # Registration of manual applications
     "recipehub.apps.recipes.apps.RecipesConfig",
     "recipehub.apps.users.apps.UsersConfig",
+    "recipehub.apps.reviews.apps.ReviewsConfig",
     # Other
     "django_cleanup.apps.CleanupConfig",
     "widget_tweaks",
@@ -134,9 +135,7 @@ EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = config("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = config(
-    "EMAIL_HOST_PASSWORD"
-)
+EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
 DEFAULT_FROM_EMAIL = "RecipeHub"
 
 JAZZMIN_SETTINGS = {
@@ -157,5 +156,12 @@ ACCOUNT_LOGOUT_ON_GET = True
 ACCOUNT_LOGIN_METHODS = {"username", "email"}
 ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = True
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
-ACCOUNT_SIGNUP_FIELDS = ['username*', 'password1*', 'password2*', 'email*', 'photo', 'date_of_birth']
+ACCOUNT_SIGNUP_FIELDS = [
+    "username*",
+    "password1*",
+    "password2*",
+    "email*",
+    "photo",
+    "date_of_birth",
+]
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
