@@ -5,4 +5,5 @@ from recipehub.apps.recipes import views
 app_name = "recipes"
 urlpatterns = [
     path("", views.index, name="index"),
+    path("recipes/", views.RecipesList.as_view(), name="recipes-list"),
 ]

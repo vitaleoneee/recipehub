@@ -74,3 +74,20 @@
 .reset-container {
     max-width: 500px;
 }
+
+.pagination .page-link {
+    background-color: #fff;
+    color: #fd7e14;
+}
+
+.pagination .page-item.active .page-link {
+    border: none;
+    background-color: #f79f4d;
+    color: #fff;
+}
+
+.pagination .page-item.disabled .page-link {
+    border: none;
+    background-color: lightgrey;
+    color: #8a8787;
+}
