@@ -62,7 +62,7 @@ class Recipe(models.Model):
         return f'"{self.name}" from {self.user.username}'
 
     def get_absolute_url(self):
-        return 1
+        return reverse("recipes:recipe-detail", kwargs={"slug": self.slug})
 
     def save(self, *args, **kwargs):
         # Compress images

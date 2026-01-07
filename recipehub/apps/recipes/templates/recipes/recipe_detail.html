@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    <title>{{ recipe.name }} – RecipeHub</title>
+{% endblock title %}
+
+{% block content %}
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-10">
+            <div class="card shadow-sm mb-4 p-3">
+                <div class="row g-3 align-items-start">
+                    <div class="col-md-5">
+                        <div class="ratio ratio-4x3 rounded overflow-hidden">
+                            {% if recipe.photo %}
+                                <img src="{{ recipe.photo.url }}" class="card-img-top h-100 w-100 object-fit-cover"
+                                     alt="{{ recipe.name }}">
+                            {% else %}
+                                <img src="{% static 'images/no-photo.jpg' %}"
+                                     class="card-img-top h-100 w-100 object-fit-cover" alt="no photo yet">
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="col-md-7 d-flex flex-column justify-content-start">
+                        <h2 class="fw-bold">{{ recipe.name }}</h2>
+                        <p class="text-muted small mb-1">
+                            by <strong>{{ recipe.user.username }}</strong> · {{ recipe.created_at|date:"M d, Y" }}
+                        </p>
+                        <p class="text-muted small mb-2">
+                            {% if recipe.category %}<i class="fa-solid fa-tag"></i>
+                                {{ recipe.category.name }}{% endif %}
+                            {% if recipe.cooking_time %} · <i class="fa-solid fa-clock"></i> {{ recipe.cooking_time }}
+                                min{% endif %}
+                            {% if recipe.calories %} · <i class="fa-solid fa-fire"></i> {{ recipe.calories }}
+                                kcal{% endif %}
+                        </p>
+                        {% if recipe.announcement_text %}
+                            <p>{{ recipe.announcement_text }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="card shadow-sm p-4 mb-4">
+
+
+                {% if recipe.recipe_text %}
+                    <h3 class="mb-2">Recipe</h3>
+                    <h6>{{ recipe.recipe_text|linebreaks }}</h6>
+                {% endif %}
+                {% if recipe.ingredients %}
+                    <h5 class="mb-2">Ingredients</h5>
+                    <ul class="list-group mb-3">
+                        {% for line in recipe.ingredients.splitlines %}
+                            <li class="list-group-item py-1">{{ line }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+
+                <div class="my-3">
+                    <h5>Rate this recipe:</h5>
+                    <div class="star-rating">
+                        <i class="fa-regular fa-star fa-lg me-1 cursor-pointer"></i>
+                        <i class="fa-regular fa-star fa-lg me-1 cursor-pointer"></i>
+                        <i class="fa-regular fa-star fa-lg me-1 cursor-pointer"></i>
+                        <i class="fa-regular fa-star fa-lg me-1 cursor-pointer"></i>
+                        <i class="fa-regular fa-star fa-lg me-1 cursor-pointer"></i>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <h5>Comments</h5>
+                    <div id="comments-section" class="mb-3">
+                        <p class="text-muted small">No comments yet. Be the first to comment!</p>
+                    </div>
+
+                    <form id="comment-form">
+                        <div class="mb-2">
+                            <textarea class="form-control" placeholder="Write a comment..." rows="2"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-orange btn-sm">Submit</button>
+                    </form>
+                </div>
+
+                <div class="mt-4 text-center">
+                    <a href="{% url 'recipes:recipes-list' %}" class="btn btn-outline-secondary">Back to Recipes</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

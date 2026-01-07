@@ -6,4 +6,5 @@ app_name = "recipes"
 urlpatterns = [
     path("", views.index, name="index"),
     path("recipes/", views.RecipesList.as_view(), name="recipes-list"),
+    path("recipes/<slug:slug>", views.recipe_detail, name="recipe-detail"),
 ]
