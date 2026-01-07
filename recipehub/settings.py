@@ -150,6 +150,7 @@ JAZZMIN_SETTINGS = {
 
 ACCOUNT_FORMS = {"signup": "recipehub.apps.users.forms.CustomSignupForm"}
 
+LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
 ACCOUNT_LOGOUT_ON_GET = True

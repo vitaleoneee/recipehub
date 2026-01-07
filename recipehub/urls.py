@@ -7,8 +7,8 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include("recipehub.apps.recipes.urls")),
     path("accounts/", include("recipehub.apps.users.urls")),
+    path("reviews/", include("recipehub.apps.reviews.urls")),
 ]
-
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

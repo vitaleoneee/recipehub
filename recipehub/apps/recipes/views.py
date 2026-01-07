@@ -1,7 +1,10 @@
+from django.contrib.auth.decorators import login_required
+from django.db.models.aggregates import Avg
 from django.shortcuts import render
 from django.views.generic import ListView
 
 from recipehub.apps.recipes.models import Recipe
+from recipehub.apps.reviews.models import Review
 
 
 def index(request):
@@ -19,6 +22,9 @@ class RecipesList(ListView):
         return context
 
 
+@login_required
 def recipe_detail(request, slug):
     recipe = Recipe.objects.get(slug=slug)
-    return render(request, "recipes/recipe_detail.html", {"recipe": recipe})
+    average_rating = Review.objects.filter(recipe=recipe).aggregate(Avg('rating'))['rating__avg']
+    return render(request, "recipes/recipe_detail.html",
+                  {"recipe": recipe, "average_rating": average_rating})

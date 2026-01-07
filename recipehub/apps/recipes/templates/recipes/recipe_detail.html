@@ -59,14 +59,22 @@
                     </ul>
                 {% endif %}
 
-                <div class="my-3">
+                <div id="rate_div" class="my-3">
                     <h5>Rate this recipe:</h5>
-                    <div class="star-rating">
+                    <div class="star-rating" data-slug="{{ recipe.slug }}">
                         <i class="fa-regular fa-star fa-lg me-1 cursor-pointer"></i>
                         <i class="fa-regular fa-star fa-lg me-1 cursor-pointer"></i>
                         <i class="fa-regular fa-star fa-lg me-1 cursor-pointer"></i>
                         <i class="fa-regular fa-star fa-lg me-1 cursor-pointer"></i>
                         <i class="fa-regular fa-star fa-lg me-1 cursor-pointer"></i>
+                    </div>
+                    <div id="rating-info" class="mt-2 d-flex align-items-center gap-2">
+                        {% if not average_rating %}
+                            <span class="text-muted fst-italic">No ratings yet – be the first!</span>
+                        {% else %}
+                            <i class="fa-solid fa-star text-warning"></i>
+                            <span class="fw-semibold">Average rating: {{ average_rating }}/5</span>
+                        {% endif %}
                     </div>
                 </div>
                 <div class="mt-4">
