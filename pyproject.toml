@@ -20,6 +20,12 @@ dependencies = [
 dev = [
     "ruff",
     "ipython",
+    "pytest",
+    "pytest-cov",
+    "pytest-django",
+    "pytest-mock",
+    "factory-boy",
+    "faker",
     "flower>=2.0.1",
 ]
 

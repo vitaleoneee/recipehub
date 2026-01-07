@@ -1,7 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-from recipehub.apps.recipes.utils import compress_images, user_photo_upload_to
+from recipehub.apps.recipes.utils import user_photo_upload_to
 
 
 class UserRecipeFavorite(models.Model):
@@ -26,10 +26,4 @@ class User(AbstractUser):
             old = type(self).objects.filter(pk=self.pk).first()
             if old and old.photo and old.photo.name != self.photo.name:
                 old.photo.delete(save=False)
-
-        # Compress images
-        if self.photo and not hasattr(self.photo, "_compressed"):
-            new_photo = compress_images(self.photo)
-            new_photo._compressed = True
-            self.photo = new_photo
         super().save(*args, **kwargs)

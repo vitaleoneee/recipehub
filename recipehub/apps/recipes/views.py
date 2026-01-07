@@ -25,6 +25,11 @@ class RecipesList(ListView):
 @login_required
 def recipe_detail(request, slug):
     recipe = Recipe.objects.get(slug=slug)
-    average_rating = Review.objects.filter(recipe=recipe).aggregate(Avg('rating'))['rating__avg']
-    return render(request, "recipes/recipe_detail.html",
-                  {"recipe": recipe, "average_rating": average_rating})
+    average_rating = Review.objects.filter(recipe=recipe).aggregate(Avg("rating"))[
+        "rating__avg"
+    ]
+    return render(
+        request,
+        "recipes/recipe_detail.html",
+        {"recipe": recipe, "average_rating": average_rating},
+    )

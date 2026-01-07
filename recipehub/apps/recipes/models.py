@@ -5,7 +5,7 @@ from django.db import models
 from django.urls import reverse
 from django.utils.text import slugify
 
-from recipehub.apps.recipes.utils import compress_images, recipe_photo_upload_to
+from recipehub.apps.recipes.utils import recipe_photo_upload_to
 
 User = get_user_model()
 
@@ -65,12 +65,6 @@ class Recipe(models.Model):
         return reverse("recipes:recipe-detail", kwargs={"slug": self.slug})
 
     def save(self, *args, **kwargs):
-        # Compress images
-        if self.photo and not hasattr(self.photo, "_compressed"):
-            new_photo = compress_images(self.photo)
-            new_photo._compressed = True
-            self.photo = new_photo
-
         if not self.slug:
             self.slug = slugify(self.name)
         super().save(*args, **kwargs)
@@ -78,7 +72,6 @@ class Recipe(models.Model):
     def clean(self):
         if not self.ingredients:
             return
-
         normalized_lines = []
         lines = self.ingredients.splitlines()
 

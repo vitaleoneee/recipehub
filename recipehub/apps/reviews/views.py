@@ -28,16 +28,18 @@ def create_review(request):
     recipe = get_object_or_404(Recipe, slug=slug)
 
     created = Review.objects.update_or_create(
-        recipe=recipe,
-        user=request.user,
-        defaults={"rating": rating}
+        recipe=recipe, user=request.user, defaults={"rating": rating}
     )
 
-    updated_average_rating = Review.objects.filter(recipe=recipe).aggregate(Avg('rating'))['rating__avg']
+    updated_average_rating = Review.objects.filter(recipe=recipe).aggregate(
+        Avg("rating")
+    )["rating__avg"]
 
-    return JsonResponse({
-        "status": "ok",
-        "rating": rating,
-        "updated": not created,
-        "average_rating": updated_average_rating,
-    })
+    return JsonResponse(
+        {
+            "status": "ok",
+            "rating": rating,
+            "updated": not created,
+            "average_rating": updated_average_rating,
+        }
+    )

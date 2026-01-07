@@ -42,3 +42,8 @@ migrations/*
 # Windows
 Thumbs.db
 Desktop.ini
+
+# Coverage
+.coverage
+*.coverage
+htmlcov/
