@@ -58,7 +58,7 @@
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end end-0">
                         <li><a class="dropdown-item" href="{% url 'profile' %}">My profile</a></li>
-                        <li><a class="dropdown-item" href="#">Saved recipes</a></li>
+                        <li><a class="dropdown-item" href="{% url 'saved-recipes' %}">Saved recipes</a></li>
                         <li>
                             <hr class="dropdown-divider">
                         </li>
@@ -207,5 +207,7 @@
         crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
 <script src="{% static 'js/stars.js' %}"></script>
+<script src="{% static 'js/favorites.js' %}"></script>
+<script src="{% static 'js/delete_from_favorites.js' %}"></script>
 </body>
 </html>

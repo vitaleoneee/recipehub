@@ -23,8 +23,19 @@
                     </div>
 
                     <div class="col-md-7 d-flex flex-column justify-content-start">
-                        <h2 class="fw-bold">{{ recipe.name }}</h2>
-                        <p class="text-muted small mb-1">
+                        <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between">
+                            <h2 class="fw-bold mb-2 mb-sm-0">{{ recipe.name }}</h2>
+                            {% if request.user != recipe.user %}
+                                <button id="favorite-btn"
+                                        class="btn btn-sm btn-outline-danger ms-0 ms-sm-2 mt-2 mt-sm-0"
+                                        data-slug="{{ recipe.slug }}"
+                                        data-is-favorited="{{ recipe.is_favorited }}">
+                                    <i class="fa-{% if is_favorited %}solid{% else %}regular{% endif %} fa-heart me-1"></i>
+                                    {% if is_favorited %}In Favorites{% else %}Add to Favorites{% endif %}
+                                </button>
+                            {% endif %}
+                        </div>
+                        <p class="text-muted small mb-1 mt-2 mt-sm-1">
                             by <strong>{{ recipe.user.username }}</strong> · {{ recipe.created_at|date:"M d, Y" }}
                         </p>
                         <p class="text-muted small mb-2">
@@ -44,8 +55,6 @@
 
 
             <div class="card shadow-sm p-4 mb-4">
-
-
                 {% if recipe.recipe_text %}
                     <h3 class="mb-2">Recipe</h3>
                     <h6>{{ recipe.recipe_text|linebreaks }}</h6>
@@ -60,9 +69,9 @@
                 {% endif %}
 
                 {% if request.user != recipe.user %}
-                    <div id="rate_div" class="my-3">
+                    <div id="rate_div" class="my-4">
                         <h5>Rate this recipe:</h5>
-                        <div class="star-rating" data-slug="{{ recipe.slug }}">
+                        <div id="star-rating" data-slug="{{ recipe.slug }}">
                             <i class="fa-regular fa-star fa-lg me-1 cursor-pointer"></i>
                             <i class="fa-regular fa-star fa-lg me-1 cursor-pointer"></i>
                             <i class="fa-regular fa-star fa-lg me-1 cursor-pointer"></i>
@@ -74,7 +83,7 @@
                                 <span class="text-muted fst-italic">No ratings yet – be the first!</span>
                             {% else %}
                                 <i class="fa-solid fa-star text-warning"></i>
-                                <span class="fw-semibold">Average rating: {{ average_rating }}/5</span>
+                                <span class="fw-semibold">Average rating: {{ average_rating|floatformat:1 }}/5</span>
                             {% endif %}
                         </div>
                     </div>

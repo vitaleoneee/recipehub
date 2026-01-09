@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const ratingBox = document.querySelector('.star-rating');
+    const ratingBox = document.getElementById('star-rating');
     if (!ratingBox) return;
 
     const stars = ratingBox.querySelectorAll('i');

@@ -38,7 +38,8 @@ class Recipe(models.Model):
     )
     recipe_text = models.TextField(blank=True, help_text="The text of the recipe")
     servings = models.IntegerField(
-        validators=[MinValueValidator(1), MaxValueValidator(100)], help_text="Number of servings"
+        validators=[MinValueValidator(1), MaxValueValidator(100)],
+        help_text="Number of servings",
     )
     cooking_time = models.IntegerField(
         blank=True,

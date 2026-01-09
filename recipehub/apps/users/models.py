@@ -9,6 +9,9 @@ class UserRecipeFavorite(models.Model):
     recipe = models.ForeignKey("recipes.Recipe", on_delete=models.CASCADE)
     added_at = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return f"{self.user.username} - {self.recipe.name}"
+
 
 class User(AbstractUser):
     date_of_birth = models.DateField(null=True, blank=True)
@@ -17,7 +20,7 @@ class User(AbstractUser):
         "recipes.Recipe",
         through="UserRecipeFavorite",
         blank=True,
-        related_name="favourites",
+        related_name="favorites",
     )
 
     def save(self, *args, **kwargs):
