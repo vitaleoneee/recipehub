@@ -27,9 +27,8 @@
                 <div class="mb-4 text-center">
                     {% if request.user.photo %}
                         <img src="{{ request.user.photo.url }}"
-                             class="rounded-circle mb-3"
-                             alt="Avatar"
-                             style="width: 100px; height: 100px; object-fit: cover; object-position: center;">
+                             class="rounded-circle mb-3 profile-avatar"
+                             alt="Avatar">
                     {% else %}
                         <img src="{% static 'images/no-avatar.jpg' %}" class="rounded-circle mb-3" alt="Avatar"
                              width="120" height="120">

@@ -33,12 +33,12 @@ class Recipe(models.Model):
     announcement_text = models.TextField(blank=True)
     photo = models.ImageField(upload_to=recipe_photo_upload_to, blank=True, null=True)
     ingredients = models.TextField(
-        help_text="Enter each ingredient on a new line and in the following order: ingredient name - quantity.",
+        help_text="Enter each ingredient on a new line and in the following order: ingredient name - quantity",
         blank=True,
     )
     recipe_text = models.TextField(blank=True, help_text="The text of the recipe")
     servings = models.IntegerField(
-        validators=[MinValueValidator(1), MaxValueValidator(100)]
+        validators=[MinValueValidator(1), MaxValueValidator(100)], help_text="Number of servings"
     )
     cooking_time = models.IntegerField(
         blank=True,

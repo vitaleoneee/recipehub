@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+
+{% load static %}
+
+{% block title %}
+    <title>Add Recipe – RecipeHub</title>
+{% endblock title %}
+
+{% block content %}
+    <div class="card shadow-sm card-add-recipe-form">
+        <div class="card-header bg-white border-0 text-center">
+            <h3 class="mb-1">
+                <i class="fa-solid fa-plus me-2 text-success"></i>
+                Share your recipe
+            </h3>
+            <p class="text-muted mb-4 small">
+                Inspire others with your favorite dish 🍽️
+            </p>
+        </div>
+
+        <div class="card-body">
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+
+                {% for field in form %}
+                    <div class="mb-4">  <!-- увеличил отступ между полями -->
+                        <label class="form-label fw-semibold">
+                            {{ field.label }}
+                            {% if field.field.required %}
+                                <span class="text-danger">*</span>
+                            {% endif %}
+                        </label>
+
+                        {% if field.name in "ingredients,instructions,description" %}
+                            <!-- большие поля для многострочного текста -->
+                            {{ field|add_class:"form-control form-control-lg" }}
+                        {% else %}
+                            {{ field|add_class:"form-control" }}
+                        {% endif %}
+
+                        {% if field.help_text %}
+                            <div class="form-text text-muted mt-1">
+                                {{ field.help_text }}
+                            </div>
+                        {% endif %}
+
+                        {% for error in field.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ error }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+
+                <div class="d-flex justify-content-between align-items-center mt-4">
+                    <a href="{% url 'recipes:index' %}" class="btn btn-outline-secondary">
+                        <i class="fa-solid fa-arrow-left me-1"></i>
+                        Back
+                    </a>
+
+                    <button type="submit" class="btn btn-success px-4">
+                        <i class="fa-solid fa-plane"></i>
+                        Submit for review
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock content %}

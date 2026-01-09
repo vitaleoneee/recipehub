@@ -1,4 +1,5 @@
 {% load static %}
+{% load widget_tweaks %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -36,7 +37,8 @@
                                         href="{% url "recipes:index" %}">Home</a></li>
                 <li class="nav-item"><a class="nav-link {% if list_active %}active{% endif %}"
                                         href="{% url "recipes:recipes-list" %}">Recipes</a></li>
-                <li class="nav-item"><a class="nav-link {% if active %}active{% endif %}" href="#">Add Recipe</a></li>
+                <li class="nav-item"><a class="nav-link {% if add_recipe_active %}active{% endif %}"
+                                        href="{% url "recipes:recipe-add" %}">Add Recipe</a></li>
                 <li class="nav-item">
                     <a class="nav-link {% if active %}active{% endif %}" href="#">
                         Recipe Builder <span class="badge bg-danger">New</span>

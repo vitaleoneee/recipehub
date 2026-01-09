@@ -1,37 +1,17 @@
-.logo {
-    color: #e65a00;
-}
-
-.btn-orange {
-    background-color: #f79f4d;
-    color: #fff;
-    border: none;
-}
-
-.btn-orange:hover {
-    color: #fff;
-    background-color: #e65a00;
-}
-
-
 .navbar-brand.logo {
     color: #ff6b00;
     text-decoration: none;
-}
-
-.navbar-brand.logo {
-    color: #ff6b00;
-    text-decoration: none;
-    transition: color 0.2s ease-in-out;
+    transition: color 0.3s ease;
 }
 
 .navbar-brand.logo:hover {
     color: #f79f4d;
 }
 
-.navbar-brand.logo:active,
-.navbar-brand.logo:focus {
-    color: #ff6b00;
+.dropdown-item:active,
+.dropdown-item.active {
+    color: #fff !important;
+    background-color: #f79f4d !important;
 }
 
 .sidebar {
@@ -43,36 +23,24 @@
 
 .sidebar-block {
     background: #ffffff;
-    border: 1px solid #e0e0e0;
+    border: 1px solid #dee2e6;
     border-radius: 0.5rem;
     padding: 1rem;
+    margin-bottom: 1rem;
 }
 
-.form-block {
-    width: 100%;
-    max-width: 400px;
+.btn-orange {
+    background-color: #f79f4d;
+    color: white;
+    border: none;
+    transition: all 0.2s ease;
 }
 
-.form-check-input:checked {
-    background-color: #fd7e14;
-    border-color: #fd7e14;
-}
-
-.form-check-input:focus {
-    border-color: #fd7e14;
-    box-shadow: 0 0 0 0.25rem rgba(253, 126, 20, 0.25);
-}
-
-.form-check-input {
-    border-color: #fd7e14;
-}
-
-.profile-card {
-    max-width: 600px;
-}
-
-.reset-container {
-    max-width: 500px;
+.btn-orange:hover {
+    color: white;
+    background-color: #e65a00;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(230, 90, 0, 0.2);
 }
 
 .pagination .page-link {
