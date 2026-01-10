@@ -68,8 +68,8 @@
                     </ul>
                 {% endif %}
 
-                {% if request.user != recipe.user %}
-                    <div id="rate_div" class="my-4">
+                <div id="rate_div" class="my-2">
+                    {% if request.user != recipe.user %}
                         <h5>Rate this recipe:</h5>
                         <div id="star-rating" data-slug="{{ recipe.slug }}">
                             <i class="fa-regular fa-star fa-lg me-1 cursor-pointer"></i>
@@ -78,16 +78,16 @@
                             <i class="fa-regular fa-star fa-lg me-1 cursor-pointer"></i>
                             <i class="fa-regular fa-star fa-lg me-1 cursor-pointer"></i>
                         </div>
-                        <div id="rating-info" class="mt-2 d-flex align-items-center gap-2">
-                            {% if not average_rating %}
-                                <span class="text-muted fst-italic">No ratings yet – be the first!</span>
-                            {% else %}
-                                <i class="fa-solid fa-star text-warning"></i>
-                                <span class="fw-semibold">Average rating: {{ average_rating|floatformat:1 }}/5</span>
-                            {% endif %}
-                        </div>
+                    {% endif %}
+                    <div id="rating-info" class="mt-2 d-flex align-items-center gap-2">
+                        {% if not average_rating %}
+                            <span class="text-muted fst-italic">No ratings yet – be the first!</span>
+                        {% else %}
+                            <i class="fa-solid fa-star text-warning"></i>
+                            <span class="fw-semibold">Average rating: {{ average_rating|floatformat:1 }}/5</span>
+                        {% endif %}
                     </div>
-                {% endif %}
+                </div>
                 <div class="{% if request.user != recipe.user %}mt-4{% else %}{% endif %}">
                     <h5>Comments</h5>
                     <div id="comments-section" class="mb-3">

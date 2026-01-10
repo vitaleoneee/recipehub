@@ -32,7 +32,7 @@ class RecipesList(ListView):
 
 @login_required
 def recipe_detail(request, slug):
-    recipe = Recipe.objects.get(slug=slug)
+    recipe = get_object_or_404(Recipe, slug=slug, approved=True)
     average_rating = Review.objects.filter(recipe=recipe).aggregate(Avg("rating"))[
         "rating__avg"
     ]
