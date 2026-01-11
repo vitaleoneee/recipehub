@@ -8,16 +8,20 @@
 {% block content %}
     <div class="row justify-content-center">
         <div class="col-12 col-lg-10">
+
+            {# RECIPE CARD #}
             <div class="card shadow-sm mb-4 p-3">
                 <div class="row g-3 align-items-start">
                     <div class="col-md-5">
                         <div class="ratio ratio-4x3 rounded overflow-hidden">
                             {% if recipe.photo %}
-                                <img src="{{ recipe.photo.url }}" class="card-img-top h-100 w-100 object-fit-cover"
+                                <img src="{{ recipe.photo.url }}"
+                                     class="card-img-top h-100 w-100 object-fit-cover"
                                      alt="{{ recipe.name }}">
                             {% else %}
                                 <img src="{% static 'images/no-photo.jpg' %}"
-                                     class="card-img-top h-100 w-100 object-fit-cover" alt="no photo yet">
+                                     class="card-img-top h-100 w-100 object-fit-cover"
+                                     alt="no photo yet">
                             {% endif %}
                         </div>
                     </div>
@@ -25,9 +29,10 @@
                     <div class="col-md-7 d-flex flex-column justify-content-start">
                         <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between">
                             <h2 class="fw-bold mb-2 mb-sm-0">{{ recipe.name }}</h2>
+
                             {% if request.user != recipe.user %}
                                 <button id="favorite-btn"
-                                        class="btn btn-sm btn-outline-danger ms-0 ms-sm-2 mt-2 mt-sm-0"
+                                        class="btn btn-sm btn-outline-danger mt-2 mt-sm-0"
                                         data-slug="{{ recipe.slug }}"
                                         data-is-favorited="{{ recipe.is_favorited }}">
                                     <i class="fa-{% if is_favorited %}solid{% else %}regular{% endif %} fa-heart me-1"></i>
@@ -35,17 +40,24 @@
                                 </button>
                             {% endif %}
                         </div>
-                        <p class="text-muted small mb-1 mt-2 mt-sm-1">
-                            by <strong>{{ recipe.user.username }}</strong> · {{ recipe.created_at|date:"M d, Y" }}
+
+                        <p class="text-muted small mb-1 mt-2">
+                            by <strong>{{ recipe.user.username }}</strong>
+                            · {{ recipe.created_at|date:"M d, Y" }}
                         </p>
+
                         <p class="text-muted small mb-2">
-                            {% if recipe.category %}<i class="fa-solid fa-tag"></i>
-                                {{ recipe.category.name }}{% endif %}
-                            {% if recipe.cooking_time %} · <i class="fa-solid fa-clock"></i> {{ recipe.cooking_time }}
-                                min{% endif %}
-                            {% if recipe.calories %} · <i class="fa-solid fa-fire"></i> {{ recipe.calories }}
-                                kcal{% endif %}
+                            {% if recipe.category %}
+                                <i class="fa-solid fa-tag"></i> {{ recipe.category.name }}
+                            {% endif %}
+                            {% if recipe.cooking_time %}
+                                · <i class="fa-solid fa-clock"></i> {{ recipe.cooking_time }} min
+                            {% endif %}
+                            {% if recipe.calories %}
+                                · <i class="fa-solid fa-fire"></i> {{ recipe.calories }} kcal
+                            {% endif %}
                         </p>
+
                         {% if recipe.announcement_text %}
                             <p>{{ recipe.announcement_text }}</p>
                         {% endif %}
@@ -53,12 +65,14 @@
                 </div>
             </div>
 
-
+            {# DETAILS CARD #}
             <div class="card shadow-sm p-4 mb-4">
+
                 {% if recipe.recipe_text %}
                     <h3 class="mb-2">Recipe</h3>
                     <h6>{{ recipe.recipe_text|linebreaks }}</h6>
                 {% endif %}
+
                 {% if recipe.ingredients %}
                     <h5 class="mb-2">Ingredients</h5>
                     <ul class="list-group mb-3">
@@ -68,43 +82,113 @@
                     </ul>
                 {% endif %}
 
-                <div id="rate_div" class="my-2">
+                {# RATING #}
+                <div id="rate_div" class="my-3">
                     {% if request.user != recipe.user %}
                         <h5>Rate this recipe:</h5>
                         <div id="star-rating" data-slug="{{ recipe.slug }}">
-                            <i class="fa-regular fa-star fa-lg me-1 cursor-pointer"></i>
-                            <i class="fa-regular fa-star fa-lg me-1 cursor-pointer"></i>
-                            <i class="fa-regular fa-star fa-lg me-1 cursor-pointer"></i>
-                            <i class="fa-regular fa-star fa-lg me-1 cursor-pointer"></i>
-                            <i class="fa-regular fa-star fa-lg me-1 cursor-pointer"></i>
+                            {% for _ in "12345" %}
+                                <i class="fa-regular fa-star fa-lg me-1 cursor-pointer"></i>
+                            {% endfor %}
                         </div>
                     {% endif %}
+
                     <div id="rating-info" class="mt-2 d-flex align-items-center gap-2">
                         {% if not average_rating %}
                             <span class="text-muted fst-italic">No ratings yet – be the first!</span>
                         {% else %}
                             <i class="fa-solid fa-star text-warning"></i>
-                            <span class="fw-semibold">Average rating: {{ average_rating|floatformat:1 }}/5</span>
+                            <span class="fw-semibold">
+                            Average rating: {{ average_rating|floatformat:1 }}/5
+                        </span>
                         {% endif %}
                     </div>
                 </div>
-                <div class="{% if request.user != recipe.user %}mt-4{% else %}{% endif %}">
-                    <h5>Comments</h5>
-                    <div id="comments-section" class="mb-3">
-                        <p class="text-muted small">No comments yet. Be the first to comment!</p>
-                    </div>
 
-                    <form id="comment-form">
-                        <div class="mb-2">
-                            <textarea class="form-control" placeholder="Write a comment..." rows="2"></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-orange btn-sm">Submit</button>
-                    </form>
+                {# COMMENTS #}
+                <div class="mt-4">
+
+                    <h5 class="mb-3">
+                        <i class="fa-regular fa-comments me-1"></i>
+                        Comments
+                        {% if comments.paginator.count %}
+                            <span class="text-muted fw-normal">
+                            ({{ comments.paginator.count }})
+                        </span>
+                        {% endif %}
+                    </h5>
+
+                    {# COMMENT FORM #}
+                    {% if request.user.is_authenticated %}
+                        <form id="comment-form" class="mb-4">
+                            <div class="mb-2">
+                            <textarea class="form-control"
+                                      name="body"
+                                      rows="3"
+                                      maxlength="500"
+                                      placeholder="Write a comment..."
+                                      required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-orange btn-sm">
+                                Submit
+                            </button>
+                        </form>
+                    {% else %}
+                        <p class="text-muted small fst-italic mb-4">
+                            Please log in to leave a comment.
+                        </p>
+                    {% endif %}
+
+                    {# COMMENTS LIST #}
+                    <div id="comments-section">
+                        {% if comments %}
+                            <div class="list-group">
+                                {% for comment in comments %}
+                                    <div class="list-group-item px-3 py-3 border-0 border-bottom">
+                                        <div class="d-flex flex-column flex-sm-row">
+                                            <div class="flex-shrink-0 mb-2 mb-sm-0 me-sm-3 text-center text-sm-start">
+                                                {% if comment.user.photo %}
+                                                    <img src="{{ comment.user.photo.url }}"
+                                                         class="rounded-circle img-fluid"
+                                                         style="width:48px; height:48px; object-fit:cover;"
+                                                         alt="{{ comment.user.username }}">
+                                                {% else %}
+                                                    <img src="{% static 'images/no-photo.jpg' %}"
+                                                         class="rounded-circle img-fluid"
+                                                         style="width:48px; height:48px; object-fit:cover;"
+                                                         alt="avatar">
+                                                {% endif %}
+                                            </div>
+
+                                            <div class="flex-grow-1">
+                                                <div class="d-flex justify-content-between align-items-center mb-1 flex-wrap">
+                                                    <strong>{{ comment.user.username }}</strong>
+                                                    <small class="text-muted">{{ comment.created_at|date:"d.m.Y H:i" }}</small>
+                                                </div>
+                                                <p class="mb-0">{{ comment.body|linebreaksbr }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+
+                            {% include "includes/pagination.html" with page_obj=comments %}
+
+                        {% else %}
+                            <p class="text-muted fst-italic text-center py-3">
+                                No comments yet. Be the first!
+                            </p>
+                        {% endif %}
+                    </div>
                 </div>
 
                 <div class="mt-4 text-center">
-                    <a href="{% url 'recipes:recipes-list' %}" class="btn btn-outline-secondary">Back to Recipes</a>
+                    <a href="{% url 'recipes:recipes-list' %}"
+                       class="btn btn-outline-secondary">
+                        Back to Recipes
+                    </a>
                 </div>
+
             </div>
         </div>
     </div>

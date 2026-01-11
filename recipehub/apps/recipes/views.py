@@ -1,6 +1,7 @@
 import json
 
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from django.db.models.aggregates import Avg
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -8,7 +9,7 @@ from django.views.generic import ListView
 
 from recipehub.apps.recipes.forms import RecipeForm
 from recipehub.apps.recipes.models import Recipe
-from recipehub.apps.reviews.models import Review
+from recipehub.apps.reviews.models import Review, Comment
 from recipehub.apps.users.models import UserRecipeFavorite
 
 
@@ -39,6 +40,12 @@ def recipe_detail(request, slug):
     is_favorited = UserRecipeFavorite.objects.filter(
         user=request.user, recipe=recipe
     ).exists()
+    comments = Comment.objects.filter(recipe=recipe)
+
+    paginator = Paginator(comments, 5)
+    page_number = request.GET.get("page")
+    comments_page = paginator.get_page(page_number)
+
     return render(
         request,
         "recipes/recipe_detail.html",
@@ -46,6 +53,7 @@ def recipe_detail(request, slug):
             "recipe": recipe,
             "average_rating": average_rating,
             "is_favorited": is_favorited,
+            "comments": comments_page,
         },
     )
 
