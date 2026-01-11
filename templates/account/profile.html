@@ -63,11 +63,11 @@
                             <div class="card h-100 shadow-sm recipe-pending-card">
                                 {% if recipe.photo %}
                                     <img src="{{ recipe.photo.url }}"
-                                         class="card-img-top moderate_image"
+                                         class="card-img-top profile-avatar"
                                          alt="{{ recipe.name }}">
                                 {% else %}
                                     <img src="{% static 'images/no-photo.jpg' %}"
-                                         class="card-img-top moderate_image"
+                                         class="card-img-top profile-avatar"
                                          alt="{{ recipe.name }}">
                                 {% endif %}
 

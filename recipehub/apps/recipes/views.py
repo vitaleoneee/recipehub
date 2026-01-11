@@ -42,6 +42,16 @@ def recipe_detail(request, slug):
     ).exists()
     comments = Comment.objects.filter(recipe=recipe)
 
+    if request.method == "POST":
+        body = request.POST.get("body", "").strip()
+        if body:
+            Comment.objects.create(
+                user=request.user,
+                recipe=recipe,
+                body=body
+            )
+            return redirect("recipes:recipe-detail", slug=slug)
+
     paginator = Paginator(comments, 5)
     page_number = request.GET.get("page")
     comments_page = paginator.get_page(page_number)

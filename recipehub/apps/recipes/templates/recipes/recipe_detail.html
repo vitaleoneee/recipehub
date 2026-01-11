@@ -118,9 +118,9 @@
                         {% endif %}
                     </h5>
 
-                    {# COMMENT FORM #}
                     {% if request.user.is_authenticated %}
-                        <form id="comment-form" class="mb-4">
+                        <form method="POST" class="mb-4">
+                            {% csrf_token %}
                             <div class="mb-2">
                             <textarea class="form-control"
                                       name="body"
