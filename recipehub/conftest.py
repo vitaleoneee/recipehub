@@ -1,6 +1,6 @@
 import pytest
 
-from recipehub.apps.recipes.tests.factories import UserFactory
+from recipehub.factories import UserFactory
 
 
 @pytest.fixture()

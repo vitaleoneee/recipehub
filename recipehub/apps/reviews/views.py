@@ -27,7 +27,7 @@ def create_review(request):
 
     recipe = get_object_or_404(Recipe, slug=slug)
 
-    created = Review.objects.update_or_create(
+    review_obj, created = Review.objects.update_or_create(
         recipe=recipe, user=request.user, defaults={"rating": rating}
     )
 

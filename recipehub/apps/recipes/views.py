@@ -30,6 +30,13 @@ class RecipesList(ListView):
         context["list_active"] = True
         return context
 
+    def paginate_queryset(self, queryset, page_size):
+        paginator = Paginator(queryset, page_size)
+        page = self.request.GET.get("page")
+        page_obj = paginator.get_page(page)
+
+        return paginator, page_obj, page_obj.object_list, page_obj.has_other_pages()
+
 
 @login_required
 def recipe_detail(request, slug):

@@ -1,6 +1,6 @@
 import pytest
 
-from recipehub.apps.recipes.tests.factories import RecipeFactory, UserFactory
+from recipehub.factories import RecipeFactory, UserFactory
 from recipehub.apps.recipes.utils import user_photo_upload_to, recipe_photo_upload_to
 
 

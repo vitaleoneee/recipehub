@@ -3,7 +3,7 @@ import random
 import factory
 from django.contrib.auth import get_user_model
 from recipehub.apps.recipes.models import Recipe, Category
-from recipehub.apps.reviews.models import Review
+from recipehub.apps.reviews.models import Review, Comment
 from recipehub.apps.users.models import UserRecipeFavorite
 
 
@@ -47,3 +47,12 @@ class UserRecipeFavoriteFactory(factory.django.DjangoModelFactory):
 
     recipe = factory.SubFactory(RecipeFactory)
     user = factory.SubFactory(UserFactory)
+
+
+class CommentFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Comment
+
+    recipe = factory.SubFactory(RecipeFactory)
+    user = factory.SubFactory(UserFactory)
+    body = factory.Sequence(lambda n: f"Comment {n}")
