@@ -46,8 +46,8 @@
                 </li>
             </ul>
 
-            <form class="d-flex me-3">
-                <input class="form-control me-2" type="search" placeholder="Search recipe">
+            <form method="GET" class="d-flex me-3" action="{% url 'recipes:recipes-list' %}">
+                <input class="form-control me-2" type="search" name="search" placeholder="Search recipe">
                 <button class="btn btn-outline-success">Search</button>
             </form>
 

@@ -1,6 +1,7 @@
 import json
 
 from django.contrib.auth.decorators import login_required
+from django.contrib.postgres.search import SearchVector
 from django.core.paginator import Paginator
 from django.db.models.aggregates import Avg
 from django.http import JsonResponse
@@ -23,10 +24,20 @@ class RecipesList(ListView):
     paginate_by = 2
 
     def get_queryset(self):
+        search_query = self.request.GET.get("search", "")
+        if search_query:
+            return Recipe.objects.annotate(
+                search=SearchVector("name") + SearchVector("ingredients") + SearchVector("recipe_text")
+            ).filter(search=search_query)
         return Recipe.objects.filter(approved=True)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        search_query = self.request.GET.get("search", "")
+        if search_query:
+            context["page_header"] = f"Recipes according to your query: {search_query}"
+        else:
+            context["page_header"] = "All Recipes"
         context["list_active"] = True
         return context
 
