@@ -30,7 +30,7 @@
                 {% endif %}
 
                 {% for field in form %}
-                    <div class="mb-4">  <!-- увеличил отступ между полями -->
+                    <div class="mb-4">
                         <label class="form-label fw-semibold">
                             {{ field.label }}
                             {% if field.field.required %}
@@ -39,7 +39,6 @@
                         </label>
 
                         {% if field.name in "ingredients,instructions,description" %}
-                            <!-- большие поля для многострочного текста -->
                             {{ field|add_class:"form-control form-control-lg" }}
                         {% else %}
                             {{ field|add_class:"form-control" }}

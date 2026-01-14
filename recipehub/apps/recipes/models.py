@@ -1,5 +1,4 @@
 from django.contrib.auth import get_user_model
-from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.urls import reverse
@@ -69,35 +68,3 @@ class Recipe(models.Model):
         if not self.slug:
             self.slug = slugify(self.name)
         super().save(*args, **kwargs)
-
-    def clean(self):
-        if not self.ingredients:
-            return
-        normalized_lines = []
-        lines = self.ingredients.splitlines()
-
-        for line in lines:
-            try:
-                name, quantity = map(str.strip, line.split("-", 1))
-            except ValueError:
-                raise ValidationError(
-                    {
-                        "ingredients": (
-                            "Each line must be in format: ingredient - quantity"
-                        )
-                    }
-                )
-
-            if not name.replace(" ", "").isalpha():
-                raise ValidationError(
-                    {"ingredients": f"Invalid ingredient name: {name}"}
-                )
-
-            if not quantity:
-                raise ValidationError(
-                    {"ingredients": f"Quantity is missing for ingredient: {name}"}
-                )
-
-            normalized_lines.append(f"{name.lower()} - {quantity}")
-
-        self.ingredients = "\n".join(normalized_lines)
