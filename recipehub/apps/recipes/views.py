@@ -12,6 +12,7 @@ from recipehub.apps.recipes.forms import RecipeForm
 from recipehub.apps.recipes.models import Recipe
 from recipehub.apps.reviews.models import Review, Comment
 from recipehub.apps.users.models import UserRecipeFavorite
+from recipehub.redis import r
 
 
 def index(request):
@@ -55,6 +56,12 @@ def recipe_detail(request, slug):
     average_rating = Review.objects.filter(recipe=recipe).aggregate(Avg("rating"))[
         "rating__avg"
     ]
+    redis_user_recipe_view_key = f'user:{request.user.id}:recipe:{recipe.id}:view'
+    redis_all_recipe_view_key = f'recipe:{recipe.id}:views'
+
+    if not r.exists(redis_user_recipe_view_key):
+        r.set(redis_user_recipe_view_key, 1)
+        r.incr(redis_all_recipe_view_key)
     is_favorited = UserRecipeFavorite.objects.filter(
         user=request.user, recipe=recipe
     ).exists()
@@ -74,6 +81,8 @@ def recipe_detail(request, slug):
     page_number = request.GET.get("page")
     comments_page = paginator.get_page(page_number)
 
+    recipe_views = int(r.get(redis_all_recipe_view_key) or 0)
+
     return render(
         request,
         "recipes/recipe_detail.html",
@@ -82,6 +91,7 @@ def recipe_detail(request, slug):
             "average_rating": average_rating,
             "is_favorited": is_favorited,
             "comments": comments_page,
+            "views": recipe_views
         },
     )
 
