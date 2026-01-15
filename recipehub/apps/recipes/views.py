@@ -28,9 +28,11 @@ class RecipesList(ListView):
         search_query = self.request.GET.get("search", "")
         if search_query:
             return Recipe.objects.annotate(
-                search=SearchVector("name") + SearchVector("ingredients") + SearchVector("recipe_text")
+                search=SearchVector("name")
+                + SearchVector("ingredients")
+                + SearchVector("recipe_text")
             ).filter(search=search_query)
-        return Recipe.objects.filter(approved=True)
+        return Recipe.objects.filter(moderation_status="approved")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -52,12 +54,12 @@ class RecipesList(ListView):
 
 @login_required
 def recipe_detail(request, slug):
-    recipe = get_object_or_404(Recipe, slug=slug, approved=True)
+    recipe = get_object_or_404(Recipe, slug=slug, moderation_status="approved")
     average_rating = Review.objects.filter(recipe=recipe).aggregate(Avg("rating"))[
         "rating__avg"
     ]
-    redis_user_recipe_view_key = f'user:{request.user.id}:recipe:{recipe.id}:view'
-    redis_all_recipe_view_key = f'recipe:{recipe.id}:views'
+    redis_user_recipe_view_key = f"user:{request.user.id}:recipe:{recipe.id}:view"
+    redis_all_recipe_view_key = f"recipe:{recipe.id}:views"
 
     if not r.exists(redis_user_recipe_view_key):
         r.set(redis_user_recipe_view_key, 1)
@@ -70,11 +72,7 @@ def recipe_detail(request, slug):
     if request.method == "POST":
         body = request.POST.get("body", "").strip()
         if body:
-            Comment.objects.create(
-                user=request.user,
-                recipe=recipe,
-                body=body
-            )
+            Comment.objects.create(user=request.user, recipe=recipe, body=body)
             return redirect("recipes:recipe-detail", slug=slug)
 
     paginator = Paginator(comments, 5)
@@ -91,7 +89,7 @@ def recipe_detail(request, slug):
             "average_rating": average_rating,
             "is_favorited": is_favorited,
             "comments": comments_page,
-            "views": recipe_views
+            "views": recipe_views,
         },
     )
 

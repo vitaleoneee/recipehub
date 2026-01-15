@@ -8,6 +8,12 @@ from recipehub.apps.recipes.utils import recipe_photo_upload_to
 
 User = get_user_model()
 
+APPROVED_CHOICES = [
+    ("approved", "Approved"),
+    ("rejected", "Rejected"),
+    ("in_process", "In Process"),
+]
+
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
@@ -47,7 +53,9 @@ class Recipe(models.Model):
         help_text="Cooking time in minutes",
     )
     created_at = models.DateTimeField(auto_now_add=True)
-    approved = models.BooleanField(default=False)
+    moderation_status = models.CharField(
+        max_length=20, choices=APPROVED_CHOICES, default="in_process"
+    )
     calories = models.IntegerField(
         blank=True,
         null=True,

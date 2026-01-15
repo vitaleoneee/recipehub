@@ -32,7 +32,9 @@ class RecipeForm(forms.ModelForm):
             try:
                 name, quantity = map(str.strip, line.split("-", 1))
             except ValueError:
-                raise ValidationError("Each line must be in format: ingredient - quantity")
+                raise ValidationError(
+                    "Each line must be in format: ingredient - quantity"
+                )
 
             if not name.replace(" ", "").isalpha():
                 raise ValidationError(f"Invalid ingredient name: {name}")

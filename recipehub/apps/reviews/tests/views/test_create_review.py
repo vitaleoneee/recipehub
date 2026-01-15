@@ -34,13 +34,15 @@ def test_review_post_create(client, users_list):
     recipe_owner_user, first_user, _ = users_list.values()
     client.force_login(first_user)
 
-    recipe = RecipeFactory.create(user=recipe_owner_user, slug="fish", approved=True)
+    recipe = RecipeFactory.create(
+        user=recipe_owner_user, slug="fish", moderation_status="approved"
+    )
 
     # Sending valid POST request
     response = client.post(
         reverse("reviews:create-review"),
         data=json.dumps({"rating": 3, "slug": recipe.slug}),
-        content_type="application/json"
+        content_type="application/json",
     )
     data = response.json()
 
@@ -57,20 +59,22 @@ def test_review_post_update(client, users_list):
     recipe_owner_user, first_user, _ = users_list.values()
     client.force_login(first_user)
 
-    recipe = RecipeFactory.create(user=recipe_owner_user, slug="fish", approved=True)
+    recipe = RecipeFactory.create(
+        user=recipe_owner_user, slug="fish", moderation_status="approved"
+    )
 
     # Creating initial review
     client.post(
         reverse("reviews:create-review"),
         data=json.dumps({"rating": 3, "slug": recipe.slug}),
-        content_type="application/json"
+        content_type="application/json",
     )
 
     # Updating review
     response = client.post(
         reverse("reviews:create-review"),
         data=json.dumps({"rating": 5, "slug": recipe.slug}),
-        content_type="application/json"
+        content_type="application/json",
     )
     data = response.json()
 
@@ -87,13 +91,15 @@ def test_review_average_rating(client, users_list):
     recipe_owner_user, first_user, second_user = users_list.values()
 
     client.force_login(first_user)
-    recipe = RecipeFactory.create(user=recipe_owner_user, slug="fish", approved=True)
+    recipe = RecipeFactory.create(
+        user=recipe_owner_user, slug="fish", moderation_status="approved"
+    )
 
     # First user adds a review
     client.post(
         reverse("reviews:create-review"),
         data=json.dumps({"rating": 5, "slug": recipe.slug}),
-        content_type="application/json"
+        content_type="application/json",
     )
 
     # Second user adds a review
@@ -101,7 +107,7 @@ def test_review_average_rating(client, users_list):
     response = client.post(
         reverse("reviews:create-review"),
         data=json.dumps({"rating": 2, "slug": recipe.slug}),
-        content_type="application/json"
+        content_type="application/json",
     )
     data = response.json()
 

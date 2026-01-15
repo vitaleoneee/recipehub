@@ -13,7 +13,9 @@ User = get_user_model()
 
 
 def profile(request):
-    pending_recipes = Recipe.objects.filter(user=request.user, approved=False)
+    pending_recipes = Recipe.objects.filter(
+        user=request.user, moderation_status="in_process"
+    ).order_by("-created_at")
     return render(
         request, "account/profile.html", context={"pending_recipes": pending_recipes}
     )

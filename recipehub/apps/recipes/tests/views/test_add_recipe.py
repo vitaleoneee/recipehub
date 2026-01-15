@@ -16,11 +16,12 @@ from recipehub.factories import CategoryFactory
         ("test1", "Good recipe", "tomato - 1", "Mix it", 2, 50, 50),
         ("TEST1", "GOOD RECIPE", "banana-41412ks", "bowl", 55, 134, 1111),
         ("tq1.51!", "its tasty", "potato- 1st", "nice!", 1, 1, 1),
-    ]
+    ],
 )
 @pytest.mark.django_db
-def test_recipe_form_valid_various_inputs_without_photo(name, announcement_text, ingredients, recipe_text,
-                                                        servings, cooking_time, calories):
+def test_recipe_form_valid_various_inputs_without_photo(
+    name, announcement_text, ingredients, recipe_text, servings, cooking_time, calories
+):
     category = CategoryFactory.create()
 
     # Testing valid form
@@ -49,9 +50,7 @@ def test_add_recipe_with_photo(client, users_list):
     with open(image_path, "rb") as f:
         photo_content = f.read()
     photo = SimpleUploadedFile(
-        "test-photo.jpg",
-        photo_content,
-        content_type="image/jpg"
+        "test-photo.jpg", photo_content, content_type="image/jpg"
     )
 
     # Create form-data
@@ -68,10 +67,11 @@ def test_add_recipe_with_photo(client, users_list):
     }
 
     # Send post request
-    response = client.post(reverse('recipes:recipe-add'), data=form_data)
+    response = client.post(reverse("recipes:recipe-add"), data=form_data)
 
     assert response.status_code == 302
     from recipehub.apps.recipes.models import Recipe
+
     recipe = Recipe.objects.get(name="test")
     assert recipe.user == user
     assert recipe.photo
@@ -87,7 +87,7 @@ def test_add_recipe_with_non_image_as_photo(client, users_list):
     fake_image = SimpleUploadedFile(
         name="fake.jpg",
         content=b"just plain text pretending to be jpeg",
-        content_type="image/jpeg"
+        content_type="image/jpeg",
     )
 
     data = {
@@ -111,7 +111,7 @@ def test_add_recipe_with_non_image_as_photo(client, users_list):
         (32, "test", 1),
         (1, "2" * 105, 1),
         (1, "test1", -1),
-    ]
+    ],
 )
 @pytest.mark.django_db
 def test_recipe_form_without_required_fields(category_id, name, servings):
@@ -131,13 +131,13 @@ def test_recipe_form_without_required_fields(category_id, name, servings):
 def test_add_recipe_template(client, users_list):
     client.force_login(users_list["first_simple_user"])
     # Testing "add recipe" page loads correctly
-    response = client.get(reverse('recipes:recipe-add'))
+    response = client.get(reverse("recipes:recipe-add"))
     assert response.status_code == 200
     # Testing correct template is used
-    assertTemplateUsed(response, 'recipes/recipe_add.html')
+    assertTemplateUsed(response, "recipes/recipe_add.html")
     # Testing context variable
-    assert response.context['add_recipe_active'] is True
-    assert isinstance(response.context['form'], RecipeForm)
+    assert response.context["add_recipe_active"] is True
+    assert isinstance(response.context["form"], RecipeForm)
 
 
 @pytest.mark.parametrize(
@@ -151,7 +151,7 @@ def test_add_recipe_template(client, users_list):
         ("  Sugar - 200g", True, None),
         ("", True, None),
         ("\n \n", True, None),
-    ]
+    ],
 )
 @pytest.mark.django_db
 def test_add_recipe_clean_ingredients(ingredients, should_be_valid, expected_error):
