@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
         favoriteButton.disabled = true;
         favoriteButton.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-1"></i>Processing...';
 
-        postData('/save-recipe/', {slug: slug, is_favorited: isFavorited})
+        postData('/save-recipe/', {slug: slug})
             .then(response => {
                 isFavorited = response.is_favorited;
                 updateFavoriteButton(isFavorited);
@@ -26,12 +26,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function postData(url, data) {
     return fetch(url, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": Cookies.get("csrftoken")
-        },
-        body: JSON.stringify(data)
+        method: "POST", headers: {
+            "Content-Type": "application/json", "X-CSRFToken": Cookies.get("csrftoken")
+        }, body: JSON.stringify(data)
     })
         .then(response => {
             if (!response.ok) {

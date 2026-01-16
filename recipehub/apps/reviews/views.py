@@ -1,23 +1,17 @@
-import json
-
 from django.contrib.auth.decorators import login_required
 from django.db.models.aggregates import Avg
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 
+from recipehub.apps.recipes.decorators import require_post_json
 from recipehub.apps.recipes.models import Recipe
 from recipehub.apps.reviews.models import Review
 
 
 @login_required
+@require_post_json
 def create_review(request):
-    if request.method != "POST":
-        return JsonResponse({"error": "POST required"}, status=405)
-
-    try:
-        data = json.loads(request.body)
-    except json.decoder.JSONDecodeError:
-        return JsonResponse({"error": "Invalid JSON"}, status=400)
+    data = request.json_data
 
     slug = data.get("slug")
     rating = data.get("rating")

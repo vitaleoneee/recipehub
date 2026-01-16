@@ -1,6 +1,15 @@
+import fakeredis
 import pytest
 
 from recipehub.factories import UserFactory
+import recipehub.redis as redis_module
+
+
+@pytest.fixture()
+def fake_redis(monkeypatch):
+    fake_client = fakeredis.FakeStrictRedis()
+    monkeypatch.setattr(redis_module, "r", fake_client)
+    return fake_client
 
 
 @pytest.fixture()

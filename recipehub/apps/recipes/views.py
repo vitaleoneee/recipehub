@@ -1,5 +1,3 @@
-import json
-
 from django.contrib.auth.decorators import login_required
 from django.contrib.postgres.search import SearchVector
 from django.core.paginator import Paginator
@@ -8,6 +6,7 @@ from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView
 
+from recipehub.apps.recipes.decorators import require_post_json
 from recipehub.apps.recipes.forms import RecipeForm
 from recipehub.apps.recipes.models import Recipe
 from recipehub.apps.reviews.models import Review, Comment
@@ -113,32 +112,24 @@ def add_recipe(request):
 
 
 @login_required
+@require_post_json
 def save_recipe(request):
-    if request.method != "POST":
-        return JsonResponse({"error": "POST required"}, status=405)
-
-    try:
-        data = json.loads(request.body)
-    except json.decoder.JSONDecodeError:
-        return JsonResponse({"error": "Invalid JSON"}, status=400)
+    data = request.json_data
 
     slug = data.get("slug")
-    current_is_favorited = data.get("is_favorited")
-
-    if slug is None or current_is_favorited is None:
+    if not slug:
         return JsonResponse({"error": "Missing fields"}, status=400)
 
     recipe = get_object_or_404(Recipe, slug=slug)
 
-    exists = UserRecipeFavorite.objects.filter(
+    favorite, created = UserRecipeFavorite.objects.get_or_create(
         user=request.user, recipe=recipe
-    ).exists()
+    )
 
-    if exists:
-        UserRecipeFavorite.objects.filter(user=request.user, recipe=recipe).delete()
+    if not created:
+        favorite.delete()
         new_status = False
     else:
-        UserRecipeFavorite.objects.create(recipe=recipe, user=request.user)
         new_status = True
 
     return JsonResponse(
