@@ -12,6 +12,10 @@ class Review(models.Model):
     rating = models.FloatField(validators=[MinValueValidator(1), MaxValueValidator(5)])
     created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        unique_together = ("recipe", "user")
+        ordering = ("-created_at",)
+
     def __str__(self):
         return f"{self.user.username} - {int(self.rating)}"
 
@@ -25,6 +29,7 @@ class Comment(models.Model):
     )
     body = models.TextField(max_length=500)
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     active = models.BooleanField(default=True)
 
     def __str__(self):

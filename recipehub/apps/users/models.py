@@ -9,6 +9,10 @@ class UserRecipeFavorite(models.Model):
     recipe = models.ForeignKey("recipes.Recipe", on_delete=models.CASCADE)
     added_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        unique_together = ("user", "recipe")
+        ordering = ("-added_at",)
+
     def __str__(self):
         return f"{self.user.username} - {self.recipe.name}"
 
