@@ -143,11 +143,11 @@ def test_add_recipe_template(client, users_list):
 @pytest.mark.parametrize(
     "ingredients,should_be_valid,expected_error",
     [
-        ("Flour - 200g\nSugar - 80g", True, None),
         ("Flour - 200g - excess", False, "Invalid quantity format"),
+        ("Flour - 200g\nSugar - 80g", True, None),
         ("Flour200g", False, "Each line must be in format"),
         ("123-200g", False, "Invalid ingredient name"),
-        ("123-", False, "Invalid quantity format"),
+        ("Flour-", False, "Quantity is missing for ingredient"),
         ("  Sugar - 200g", True, None),
         ("", True, None),
         ("\n \n", True, None),
@@ -160,4 +160,5 @@ def test_add_recipe_clean_ingredients(ingredients, should_be_valid, expected_err
     if should_be_valid:
         assert "ingredients" not in form.errors
     else:
+        assert expected_error in form.errors["ingredients"][0]
         assert "ingredients" in form.errors
