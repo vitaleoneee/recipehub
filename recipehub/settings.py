@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     "widget_tweaks",
     "allauth",
     "allauth.account",
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -166,3 +167,8 @@ ACCOUNT_SIGNUP_FIELDS = [
     "date_of_birth",
 ]
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
+
+REST_FRAMEWORK = {
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 10,
+}
