@@ -12,6 +12,10 @@ def valid_extension(filename):
         raise ValueError("Unsupported image format")
 
 
+def reformate_ingredients(raw_ingredients: str) -> list:
+    return [i.strip() for i in raw_ingredients.strip().split(",")]
+
+
 def user_photo_upload_to(instance, filename):
     """
     Save user photo in the folder - media/user-photo/<filename>

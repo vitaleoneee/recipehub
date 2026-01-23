@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.postgres.search import SearchVector
 from django.core.paginator import Paginator
+from django.db.models import Q
 from django.db.models.aggregates import Avg
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -9,7 +10,7 @@ from django.views.generic import ListView
 from recipehub.apps.recipes.decorators import require_post_json
 from recipehub.apps.recipes.forms import RecipeForm
 from recipehub.apps.recipes.models import Recipe
-from recipehub.apps.recipes.recipe_builder import builder
+from recipehub.apps.recipes.utils import reformate_ingredients
 from recipehub.apps.reviews.models import Review, Comment
 from recipehub.apps.users.models import UserRecipeFavorite
 from recipehub.redis import r
@@ -25,14 +26,23 @@ class RecipesList(ListView):
     paginate_by = 2
 
     def get_queryset(self):
+        ingredients = self.request.GET.getlist("ingredients")
         search_query = self.request.GET.get("search", "")
+        queryset = Recipe.objects.filter(moderation_status="approved")
+
         if search_query:
-            return Recipe.objects.annotate(
+            queryset = queryset.annotate(
                 search=SearchVector("name")
                 + SearchVector("ingredients")
                 + SearchVector("recipe_text")
-            ).filter(search=search_query, moderation_status="approved")
-        return Recipe.objects.filter(moderation_status="approved")
+            ).filter(search=search_query)
+        elif ingredients:
+            q = Q()
+            for ing in ingredients:
+                q |= Q(ingredients__icontains=ing)
+            queryset = Recipe.objects.filter(q, moderation_status="approved")
+
+        return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -143,25 +153,26 @@ def save_recipe(request):
 
 @login_required
 def recipe_builder(request):
-    if "ingredients" not in request.session:
-        request.session["ingredients"] = []
-    ingredients = request.session["ingredients"]
+    ingredients = request.session.get("ingredients", [])
 
     if request.method == "POST":
-        raw_ingredients = request.POST.get("ingredients")
-        raw_find = request.POST.get("find_recipes")
-        if raw_ingredients:
-            reformated_ingredients = builder.reformate_ingredients(raw_ingredients)
-            request.session["ingredients"] += reformated_ingredients
+        if "ingredients" in request.POST:
+            raw_ingredients = request.POST["ingredients"]
+            reformated_ingredients = reformate_ingredients(raw_ingredients)
+            ingredients += reformated_ingredients
+            request.session["ingredients"] = ingredients
             request.session.modified = True
-        elif raw_find:
-            pass
-        elif request.POST.get("clear_ingredients"):
+
+        elif "clear_ingredients" in request.POST:
             ingredients = []
             del request.session["ingredients"]
             request.session.modified = True
+
     return render(
         request,
         "recipes/recipe_builder.html",
-        context={"ingredients": ingredients, "recipe_builder_active": True},
+        context={
+            "ingredients": ingredients,
+            "recipe_builder_active": True,
+        },
     )

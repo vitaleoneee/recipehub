@@ -60,27 +60,32 @@
                 </div>
             </div>
 
-            <!-- Search Button -->
-            <form method="POST" class="mb-4">
-                {% csrf_token %}
-                <div class="d-grid gap-2 d-md-flex">
+            <div class="d-grid gap-2 d-md-flex">
+                <!-- Find Recipes Form -->
+                <form method="GET" action="{% url 'recipes:recipes-list' %}" class="flex-fill">
+                    {% for ingredient in ingredients %}
+                        <input type="hidden" name="ingredients" value="{{ ingredient }}">
+                    {% endfor %}
                     <button
-                            class="btn btn-orange btn-lg flex-fill"
-                            type="submit"
-                            name="find_recipes"
-                            value="1">
+                            class="btn btn-orange btn-lg w-100"
+                            type="submit">
                         <i class="fa-solid fa-search me-2"></i>Find Recipes
                     </button>
+                </form>
 
+                <!-- Clear Form -->
+                <form method="POST" class="flex-fill">
+                    {% csrf_token %}
                     <button
-                            class="btn btn-orange btn-lg flex-fill"
+                            class="btn btn-orange btn-lg w-100"
                             type="submit"
                             name="clear_ingredients"
                             value="1">
                         <i class="fa-solid fa-trash me-2"></i>Clear
                     </button>
-                </div>
-            </form>
+                </form>
+            </div>
+
         </div>
     </div>
 {% endblock content %}
