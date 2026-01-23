@@ -2,9 +2,8 @@ from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.urls import reverse
-from django.utils.text import slugify
 
-from recipehub.apps.recipes.utils import recipe_photo_upload_to
+from recipehub.apps.recipes.utils import recipe_photo_upload_to, generate_unique_slug
 
 User = get_user_model()
 
@@ -21,13 +20,7 @@ class Category(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            base_slug = slugify(self.name)
-            slug = base_slug
-            counter = 1
-            while Category.objects.filter(slug=slug).exclude(pk=self.pk).exists():
-                slug = f"{base_slug}-{counter}"
-                counter += 1
-            self.slug = slug
+            self.slug = generate_unique_slug(self, self.name)
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -81,11 +74,5 @@ class Recipe(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            base_slug = slugify(self.name)
-            slug = base_slug
-            counter = 1
-            while Recipe.objects.filter(slug=slug).exclude(pk=self.pk).exists():
-                slug = f"{base_slug}-{counter}"
-                counter += 1
-            self.slug = slug
+            self.slug = generate_unique_slug(self, self.name)
         super().save(*args, **kwargs)

@@ -1,6 +1,8 @@
 import os
 import uuid
 
+from django.utils.text import slugify
+
 
 def valid_extension(filename):
     ext = filename.lower()
@@ -14,6 +16,16 @@ def valid_extension(filename):
 
 def reformate_ingredients(raw_ingredients: str) -> list:
     return [i.strip() for i in raw_ingredients.strip().split(",")]
+
+
+def generate_unique_slug(instance, slugify_value):
+    base_slug = slugify(slugify_value)
+    slug = base_slug
+    counter = 1
+    while instance.__class__.objects.filter(slug=slug).exclude(pk=instance.pk).exists():
+        slug = f"{base_slug}-{counter}"
+        counter += 1
+    return slug
 
 
 def user_photo_upload_to(instance, filename):

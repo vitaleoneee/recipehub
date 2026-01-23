@@ -10,7 +10,7 @@ def test_recipe_list_view_with_pagination(client, users_list):
         user=users_list["recipe_owner_user"],
         name="Fish",
         slug="fish",
-        moderation_status=True,
+        moderation_status="approved",
     )
     second_fish_recipe = RecipeFactory.create(
         user=users_list["first_simple_user"],
