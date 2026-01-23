@@ -9,6 +9,7 @@ from django.views.generic import ListView
 from recipehub.apps.recipes.decorators import require_post_json
 from recipehub.apps.recipes.forms import RecipeForm
 from recipehub.apps.recipes.models import Recipe
+from recipehub.apps.recipes.recipe_builder import builder
 from recipehub.apps.reviews.models import Review, Comment
 from recipehub.apps.users.models import UserRecipeFavorite
 from recipehub.redis import r
@@ -30,7 +31,7 @@ class RecipesList(ListView):
                 search=SearchVector("name")
                 + SearchVector("ingredients")
                 + SearchVector("recipe_text")
-            ).filter(search=search_query)
+            ).filter(search=search_query, moderation_status="approved")
         return Recipe.objects.filter(moderation_status="approved")
 
     def get_context_data(self, **kwargs):
@@ -137,4 +138,30 @@ def save_recipe(request):
             "status": "ok",
             "is_favorited": new_status,
         }
+    )
+
+
+@login_required
+def recipe_builder(request):
+    if "ingredients" not in request.session:
+        request.session["ingredients"] = []
+    ingredients = request.session["ingredients"]
+
+    if request.method == "POST":
+        raw_ingredients = request.POST.get("ingredients")
+        raw_find = request.POST.get("find_recipes")
+        if raw_ingredients:
+            reformated_ingredients = builder.reformate_ingredients(raw_ingredients)
+            request.session["ingredients"] += reformated_ingredients
+            request.session.modified = True
+        elif raw_find:
+            pass
+        elif request.POST.get("clear_ingredients"):
+            ingredients = []
+            del request.session["ingredients"]
+            request.session.modified = True
+    return render(
+        request,
+        "recipes/recipe_builder.html",
+        context={"ingredients": ingredients, "recipe_builder_active": True},
     )

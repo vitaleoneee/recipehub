@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     "widget_tweaks",
     "allauth",
     "allauth.account",
-    'rest_framework',
+    "rest_framework",
 ]
 
 MIDDLEWARE = [

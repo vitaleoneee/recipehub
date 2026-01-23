@@ -40,7 +40,8 @@
                 <li class="nav-item"><a class="nav-link {% if add_recipe_active %}active{% endif %}"
                                         href="{% url "recipes:recipe-add" %}">Add Recipe</a></li>
                 <li class="nav-item">
-                    <a class="nav-link {% if active %}active{% endif %}" href="#">
+                    <a class="nav-link {% if recipe_builder_active %}active{% endif %}"
+                       href="{% url "recipes:recipe-builder" %}">
                         Recipe Builder <span class="badge bg-danger">New</span>
                     </a>
                 </li>

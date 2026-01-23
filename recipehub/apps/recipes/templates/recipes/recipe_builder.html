@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    <title>Recipe Builder - RecipeHub</title>
+{% endblock title %}
+
+{% block content %}
+    <div class="card shadow-sm">
+        <div class="card-header btn-orange text-white">
+            <h3 class="mb-0">
+                <i class="fa-solid fa-magic-wand-sparkles me-2"></i>Recipe Builder
+            </h3>
+            <p class="mb-0 small">Find recipes based on ingredients you have!</p>
+        </div>
+
+        <div class="card-body">
+            <!-- Ingredient Input Section -->
+            <form method="POST" class="mb-4">
+                {% csrf_token %}
+                <div class="mb-4">
+                    <label for="ingredientInput" class="form-label fw-bold">
+                        <i class="fa-solid fa-carrot me-1"></i>Enter Ingredients
+                    </label>
+                    <div class="input-group">
+                        <input
+                                type="text"
+                                class="form-control"
+                                id="ingredientInput"
+                                placeholder="e.g., tomatoes, cheese, pasta"
+                                aria-label="Ingredient input"
+                                name="ingredients"
+                        >
+                        <button class="btn btn-success" type="submit" id="addIngredientBtn">
+                            <i class="fa-solid fa-plus me-1"></i>Add
+                        </button>
+                    </div>
+                    <div class="form-text">
+                        <i class="fa-solid fa-info-circle me-1"></i>
+                        Separate ingredients with commas
+                    </div>
+                </div>
+            </form>
+
+            <!-- Selected Ingredients Display -->
+            <div class="mb-4">
+                <h5 class="mb-3">
+                    <i class="fa-solid fa-basket-shopping me-2"></i>Your Ingredients
+                </h5>
+                <div id="ingredientsContainer" class="d-flex flex-wrap gap-2 p-3 bg-light rounded min-height-100">
+                    {% if ingredients %}
+                        {% for ingredient in ingredients %}
+                            <span class="ingredient-chip">
+                                <i class="fa-solid fa-seedling me-1"></i>{{ ingredient }}
+                            </span>
+                        {% endfor %}
+                    {% else %}
+                        <span class="text-muted">No ingredients added yet...</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Search Button -->
+            <form method="POST" class="mb-4">
+                {% csrf_token %}
+                <div class="d-grid gap-2 d-md-flex">
+                    <button
+                            class="btn btn-orange btn-lg flex-fill"
+                            type="submit"
+                            name="find_recipes"
+                            value="1">
+                        <i class="fa-solid fa-search me-2"></i>Find Recipes
+                    </button>
+
+                    <button
+                            class="btn btn-orange btn-lg flex-fill"
+                            type="submit"
+                            name="clear_ingredients"
+                            value="1">
+                        <i class="fa-solid fa-trash me-2"></i>Clear
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock content %}
