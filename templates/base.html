@@ -98,45 +98,21 @@
                     <h5 class="text-center mb-3">Best Recipes ⭐</h5>
 
                     <div class="row g-3">
-                        <div class="col-6">
-                            <div class="card h-100">
-                                <img src="{% static 'img/pizza.jpg' %}" class="card-img-top" alt="Pizza">
-                                <div class="card-body text-center p-2">
-                                    <h6 class="mb-1">Pizza</h6>
-                                    <a href="#" class="btn btn-sm btn-orange">More</a>
+                        {% for recipe in best_recipes %}
+                            <div class="col-6">
+                                <div class="card h-100">
+                                    {% if recipe.photo %}
+                                        <img src="{{ recipe.photo.url }}" class="card-img-top" alt="{{ recipe.name }}">
+                                    {% else %}
+                                        <img src="{% static 'images/no-photo.jpg' %}" alt="no photo">
+                                    {% endif %}
+                                    <div class="card-body text-center p-2">
+                                        <h6 class="mb-1">{{ recipe.name }}</h6>
+                                        <a href="{{ recipe.get_absolute_url }}" class="btn btn-sm btn-orange">More</a>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-
-                        <div class="col-6">
-                            <div class="card h-100">
-                                <img src="{% static 'img/sushi.jpg' %}" class="card-img-top" alt="Sushi">
-                                <div class="card-body text-center p-2">
-                                    <h6 class="mb-1">Sushi</h6>
-                                    <a href="#" class="btn btn-sm btn-orange">More</a>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-6">
-                            <div class="card h-100">
-                                <img src="{% static 'img/borsh.jpg' %}" class="card-img-top" alt="Borsh">
-                                <div class="card-body text-center p-2">
-                                    <h6 class="mb-1">Borsh</h6>
-                                    <a href="#" class="btn btn-sm btn-orange">More</a>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-6">
-                            <div class="card h-100">
-                                <img src="{% static 'img/pasta.jpg' %}" class="card-img-top" alt="Pasta">
-                                <div class="card-body text-center p-2">
-                                    <h6 class="mb-1">Pasta</h6>
-                                    <a href="#" class="btn btn-sm btn-orange">More</a>
-                                </div>
-                            </div>
-                        </div>
+                        {% endfor %}
                     </div>
                 </div>
 

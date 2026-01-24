@@ -29,6 +29,45 @@
     margin-bottom: 1rem;
 }
 
+.sidebar-block .card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+
+.sidebar-block .card img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    object-position: center;
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+}
+
+.sidebar-block .card-body {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-align: center;
+    padding: 0.5rem;
+}
+
+.sidebar-block .card-body h6 {
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sidebar-block .card-body .btn {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+}
+
+
 .btn-orange {
     background-color: #f79f4d;
     color: white;

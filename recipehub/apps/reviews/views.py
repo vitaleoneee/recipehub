@@ -6,6 +6,7 @@ from django.shortcuts import get_object_or_404
 from recipehub.apps.recipes.decorators import require_post_json
 from recipehub.apps.recipes.models import Recipe
 from recipehub.apps.reviews.models import Review
+from recipehub.redis import r
 
 
 @login_required
@@ -28,6 +29,9 @@ def create_review(request):
     updated_average_rating = Review.objects.filter(recipe=recipe).aggregate(
         Avg("rating")
     )["rating__avg"]
+
+    # Saving the average rating in Redis via sorted set
+    r.zadd("recipe:ratings", {recipe.id: updated_average_rating})
 
     return JsonResponse(
         {
