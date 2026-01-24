@@ -32,6 +32,7 @@ dev = [
     "factory-boy",
     "faker",
     "flower>=2.0.1",
+    "freezegun",
 ]
 
 [tool.ruff]

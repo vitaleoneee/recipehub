@@ -158,6 +158,15 @@ def recipe_builder(request):
     if request.method == "POST":
         if "ingredients" in request.POST:
             raw_ingredients = request.POST["ingredients"]
+            if not raw_ingredients:
+                return render(
+                    request,
+                    "recipes/recipe_builder.html",
+                    context={
+                        "ingredients": ingredients,
+                        "recipe_builder_active": True,
+                    },
+                )
             reformated_ingredients = reformate_ingredients(raw_ingredients)
             ingredients += reformated_ingredients
             request.session["ingredients"] = ingredients
