@@ -3,6 +3,9 @@ from recipehub.apps.recipes.models import Recipe
 
 
 def redis_best_recipes(request):
+    """
+    Returns top 4 rated recipes from Redis.
+    """
     top_ids = r.zrevrange("recipe:ratings", 0, 3)
     if not top_ids:
         return {"best_recipes": []}

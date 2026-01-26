@@ -1,5 +1,4 @@
 from django import forms
-from django.core.exceptions import ValidationError
 
 from recipehub.apps.recipes.models import Recipe
 from recipehub.apps.recipes.utils import validate_ingredients_format

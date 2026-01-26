@@ -7,6 +7,9 @@ import recipehub.redis as redis_module
 
 @pytest.fixture()
 def fake_redis(monkeypatch):
+    """
+    Fixture for creating a fake redis
+    """
     fake_client = fakeredis.FakeStrictRedis()
     monkeypatch.setattr(redis_module, "r", fake_client)
     return fake_client

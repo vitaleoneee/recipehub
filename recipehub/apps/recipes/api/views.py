@@ -21,7 +21,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
-    lookup_field = 'slug'
+    lookup_field = "slug"
 
     def get_queryset(self):
         user = self.request.user

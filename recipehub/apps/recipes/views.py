@@ -37,6 +37,7 @@ class RecipesList(ListView):
                 + SearchVector("recipe_text")
             ).filter(search=search_query)
         elif ingredients:
+            # Search all recipes with specific ingredients
             q = Q()
             for ing in ingredients:
                 q |= Q(ingredients__icontains=ing)

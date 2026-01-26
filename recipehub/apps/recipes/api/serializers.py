@@ -9,17 +9,15 @@ class CategorySerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Category
-        fields = [
-            "url",
-            "name",
-            "slug"
-        ]
+        fields = ["url", "name", "slug"]
         read_only_fields = ["slug"]
 
 
 class RecipeSerializer(serializers.HyperlinkedModelSerializer):
     user = serializers.StringRelatedField(read_only=True)
-    category = serializers.HyperlinkedRelatedField(view_name='category-detail', queryset=Category.objects.all())
+    category = serializers.HyperlinkedRelatedField(
+        view_name="category-detail", queryset=Category.objects.all()
+    )
 
     class Meta:
         model = Recipe
@@ -36,7 +34,7 @@ class RecipeSerializer(serializers.HyperlinkedModelSerializer):
             "cooking_time",
             "moderation_status",
             "calories",
-            "created_at"
+            "created_at",
         ]
         read_only_fields = ["user", "created_at", "slug", "moderation_status"]
 

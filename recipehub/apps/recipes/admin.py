@@ -1,6 +1,12 @@
 from django.contrib import admin
-
 from recipehub.apps.recipes.models import Recipe, Category
 
-admin.site.register(Recipe)
-admin.site.register(Category)
+
+@admin.register(Recipe)
+class RecipeAdmin(admin.ModelAdmin):
+    list_display = ["user", "category", "name", "moderation_status"]
+
+
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ["name"]

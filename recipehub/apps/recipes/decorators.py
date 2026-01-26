@@ -4,6 +4,11 @@ from django.http import JsonResponse
 
 
 def require_post_json(view_func):
+    """
+    Ensures that the request is a POST request with a valid JSON payload.
+    Parsed JSON is доступен as request.json_data.
+    """
+
     @wraps(view_func)
     def wrapper(request, *args, **kwargs):
         if request.method != "POST":

@@ -48,7 +48,8 @@
             </ul>
 
             <form method="GET" class="d-flex me-3" action="{% url 'recipes:recipes-list' %}">
-                <input class="form-control me-2" type="search" name="search" placeholder="Search recipe">
+                <input class="form-control me-2" type="search" name="search"
+                       placeholder="Search recipes..." aria-label="Search">
                 <button class="btn btn-outline-success">Search</button>
             </form>
 
@@ -104,7 +105,7 @@
                                     {% if recipe.photo %}
                                         <img src="{{ recipe.photo.url }}" class="card-img-top" alt="{{ recipe.name }}">
                                     {% else %}
-                                        <img src="{% static 'images/no-photo.jpg' %}" alt="no photo">
+                                        <img src="{% static 'images/no-photo.jpg' %}" alt="{{ recipe.name }}">
                                     {% endif %}
                                     <div class="card-body text-center p-2">
                                         <h6 class="mb-1">{{ recipe.name }}</h6>
@@ -117,7 +118,7 @@
                 </div>
 
                 <!-- Medium block -->
-                <div class="sidebar-block mt-auto text-center">
+                <div class="sidebar-block text-center">
                     <h5 class="mb-2">Cook. Share. Inspire. 🍳✨</h5>
 
                     <p class="small text-muted mb-3">
@@ -135,7 +136,7 @@
                     <h6 class="mb-2">Join the community!</h6>
                 </div>
                 <!-- Carousel block -->
-                <div id="carouselExample" class="sidebar-block mt-auto text-center carousel slide">
+                <div id="sidebarCarousel" class="sidebar-block mt-auto text-center carousel slide">
                     <div class="carousel-inner">
                         <div class="carousel-item active">
                             <img src="{% static 'images/food.jpg' %}" class="d-block w-100" alt="...">
@@ -150,12 +151,12 @@
                             <img src="{% static 'images/cake.jpg' %}" class="d-block w-100" alt="...">
                         </div>
                     </div>
-                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample"
+                    <button class="carousel-control-prev" type="button" data-bs-target="#sidebarCarousel"
                             data-bs-slide="prev">
                         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                         <span class="visually-hidden">Previous</span>
                     </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExample"
+                    <button class="carousel-control-next" type="button" data-bs-target="#sidebarCarousel"
                             data-bs-slide="next">
                         <span class="carousel-control-next-icon" aria-hidden="true"></span>
                         <span class="visually-hidden">Next</span>

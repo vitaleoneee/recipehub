@@ -50,6 +50,8 @@ def remove_saved_recipe(request):
     recipe = get_object_or_404(Recipe, slug=slug)
 
     favorite = UserRecipeFavorite.objects.filter(user=request.user, recipe=recipe)
+
+    # Toggle realization favorites recipes
     if favorite.exists():
         favorite.delete()
         return JsonResponse({"status": "ok", "removed": True})
