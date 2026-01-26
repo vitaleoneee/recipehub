@@ -2,6 +2,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 
 from recipehub.apps.recipes.models import Recipe
+from recipehub.apps.recipes.utils import validate_ingredients_format
 
 
 class RecipeForm(forms.ModelForm):
@@ -20,31 +21,5 @@ class RecipeForm(forms.ModelForm):
         ]
 
     def clean_ingredients(self):
-        ingredients = self.cleaned_data.get("ingredients", "").strip()
-
-        if not ingredients:
-            return ingredients
-
-        normalized_lines = []
-        lines = ingredients.splitlines()
-
-        for line in lines:
-            try:
-                name, quantity = map(str.strip, line.split("-", 1))
-            except ValueError:
-                raise ValidationError(
-                    "Each line must be in format: ingredient - quantity"
-                )
-
-            if not name.replace(" ", "").isalpha():
-                raise ValidationError(f"Invalid ingredient name: {name}")
-
-            if not quantity:
-                raise ValidationError(f"Quantity is missing for ingredient: {name}")
-
-            if " - " in quantity:
-                raise ValidationError(f"Invalid quantity format: '{line}'")
-
-            normalized_lines.append(f"{name.lower()} - {quantity}")
-
-        return "\n".join(normalized_lines)
+        value = self.cleaned_data.get("ingredients", "")
+        return validate_ingredients_format(value)
