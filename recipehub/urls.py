@@ -4,10 +4,11 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
-from recipehub.apps.recipes.api.views import RecipeViewSet
+from recipehub.apps.recipes.api.views import RecipeViewSet, CategoryViewSet
 
 router = DefaultRouter()
 router.register("recipes", RecipeViewSet)
+router.register("categories", CategoryViewSet)
 
 urlpatterns = [
     path("admin/", admin.site.urls),

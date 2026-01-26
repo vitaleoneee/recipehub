@@ -1,11 +1,25 @@
 from rest_framework import serializers
 
-from recipehub.apps.recipes.models import Recipe
+from recipehub.apps.recipes.models import Recipe, Category
 from recipehub.apps.recipes.utils import validate_ingredients_format
 
 
-class RecipeSerializer(serializers.ModelSerializer):
+class CategorySerializer(serializers.HyperlinkedModelSerializer):
+    url = serializers.HyperlinkedIdentityField(view_name="category-detail")
+
+    class Meta:
+        model = Category
+        fields = [
+            "url",
+            "name",
+            "slug"
+        ]
+        read_only_fields = ["slug"]
+
+
+class RecipeSerializer(serializers.HyperlinkedModelSerializer):
     user = serializers.StringRelatedField(read_only=True)
+    category = serializers.HyperlinkedRelatedField(view_name='category-detail', queryset=Category.objects.all())
 
     class Meta:
         model = Recipe
