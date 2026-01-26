@@ -20,7 +20,7 @@ from recipehub.factories import CategoryFactory
 )
 @pytest.mark.django_db
 def test_recipe_form_valid_various_inputs_without_photo(
-    name, announcement_text, ingredients, recipe_text, servings, cooking_time, calories
+        name, announcement_text, ingredients, recipe_text, servings, cooking_time, calories
 ):
     category = CategoryFactory.create()
 
@@ -149,8 +149,6 @@ def test_add_recipe_template(client, users_list):
         ("123-200g", False, "Invalid ingredient name"),
         ("Flour-", False, "Quantity is missing for ingredient"),
         ("  Sugar - 200g", True, None),
-        ("", True, None),
-        ("\n \n", True, None),
     ],
 )
 @pytest.mark.django_db

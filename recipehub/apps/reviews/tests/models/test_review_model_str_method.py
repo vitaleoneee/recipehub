@@ -1,18 +1,19 @@
 import pytest
-from recipehub.factories import RecipeFactory, UserFactory
+from recipehub.factories import UserFactory, ReviewFactory
 
 
 @pytest.mark.parametrize(
-    "name,username,expected",
+    "username,rating,expected",
     [
-        ("Pizza Carbonara", "Vitalii", '"Pizza Carbonara" from Vitalii'),
-        ("Fish", "Ben", '"Fish" from Ben'),
-        ("Desert", "Alex", '"Desert" from Alex'),
+        ("Vitalii", 5, "Vitalii - 5"),
+        ("Ben", 4, "Ben - 4"),
+        ("Alex", 3, "Alex - 3"),
     ],
 )
 @pytest.mark.django_db
-def test_recipe_model_str_method(name, username, expected):
+def test_review_model_str_method(username, rating, expected):
     user = UserFactory.create(username=username)
-    recipe = RecipeFactory.create(name=name, user=user)
+    review = ReviewFactory.create(user=user, rating=rating)
 
-    assert str(recipe) == expected
+    assert str(review) == expected
+
