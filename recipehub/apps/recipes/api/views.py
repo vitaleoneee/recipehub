@@ -1,6 +1,8 @@
 from django.db import transaction
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
+from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 
@@ -26,6 +28,13 @@ class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
     lookup_field = "slug"
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_fields = {
+        "category__name": ["exact"],
+        "cooking_time": ["exact", "gt", "gte", "lt", "lte"],
+    }
+    search_fields = ["name", "ingredients", "recipe_text"]
+    ordering_fields = ["name", "cooking_time", "created_at"]
 
     def get_queryset(self):
         user = self.request.user
@@ -53,6 +62,14 @@ class RecipeViewSet(viewsets.ModelViewSet):
             permission_classes=[IsAdminUser])
     def get_in_process_recipes(self, request):
         recipes = Recipe.objects.filter(moderation_status="in_process")
+        serializer = RecipeSerializer(recipes, many=True, context={"request": request})
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=["get"], url_path="approved",
+            name="Approved recipes",
+            permission_classes=[IsAdminUser])
+    def get_approved_recipes(self, request):
+        recipes = Recipe.objects.filter(moderation_status="approved")
         serializer = RecipeSerializer(recipes, many=True, context={"request": request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
