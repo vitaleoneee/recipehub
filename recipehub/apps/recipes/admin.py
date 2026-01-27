@@ -4,7 +4,7 @@ from recipehub.apps.recipes.models import Recipe, Category
 
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
-    list_display = ["user", "category", "name", "moderation_status"]
+    list_display = ["id", "user", "category", "name", "moderation_status"]
 
 
 @admin.register(Category)

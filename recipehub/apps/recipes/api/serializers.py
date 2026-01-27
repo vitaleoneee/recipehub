@@ -44,3 +44,7 @@ class RecipeSerializer(serializers.HyperlinkedModelSerializer):
 
     def validate_ingredients(self, value):
         return validate_ingredients_format(value)
+
+
+class RecipeModerationSerializer(serializers.Serializer):
+    status = serializers.ChoiceField(choices=("approved", "rejected"))
