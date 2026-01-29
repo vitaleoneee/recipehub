@@ -5,12 +5,14 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
 from recipehub.apps.recipes.api.views import RecipeViewSet, CategoryViewSet
+from recipehub.apps.reviews.api.views import ReviewViewSet
 from recipehub.apps.users.api.views import UserViewSet
 
 router = DefaultRouter()
 router.register("recipes", RecipeViewSet)
 router.register("categories", CategoryViewSet)
 router.register("users", UserViewSet)
+router.register("reviews", ReviewViewSet)
 
 urlpatterns = [
     path("admin/", admin.site.urls),
