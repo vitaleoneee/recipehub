@@ -6,7 +6,7 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 
-from recipehub.apps.recipes.api import permissions as recipe_custom_permissions
+import recipehub.api_permissions as recipe_custom_permissions
 from recipehub.apps.recipes.api.pagination import CategoryPagination
 
 from recipehub.apps.recipes.api.serializers import RecipeSerializer, CategorySerializer, RecipeModerationSerializer
@@ -21,7 +21,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
     def get_permissions(self):
         if self.action in ["list", "retrieve"]:
             return [permissions.AllowAny()]
-        return [permissions.IsAdminUser()]
+        return [permissions.IsAuthenticated(), permissions.IsAdminUser()]
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
@@ -43,11 +43,15 @@ class RecipeViewSet(viewsets.ModelViewSet):
         return Recipe.objects.filter(moderation_status="approved")
 
     def get_permissions(self):
-        if self.action == "create" or self.action == "retrieve":
+        if self.action in ["list"]:
+            return [permissions.AllowAny()]
+        elif self.action in ["create", "retrieve"]:
             return [permissions.IsAuthenticated()]
         elif self.action == "destroy":
-            return [recipe_custom_permissions.IsAdminOrOwner()]
-        return super().get_permissions()
+            return [permissions.IsAuthenticated(), recipe_custom_permissions.IsAdminOrOwner()]
+        elif self.action in ["update", "partial_update", "destroy"]:
+            return [permissions.IsAuthenticated(), recipe_custom_permissions.IsAdminOrOwner()]
+        return [permissions.IsAuthenticated()]
 
     # Special lists block
     @action(detail=False, methods=["get"], url_path="my-recipes", permission_classes=[IsAuthenticated])
@@ -59,22 +63,14 @@ class RecipeViewSet(viewsets.ModelViewSet):
     # Moderation block
     @action(detail=False, methods=["get"], url_path="in-process",
             name="Recipes are being moderated",
-            permission_classes=[IsAdminUser])
+            permission_classes=[IsAuthenticated, IsAdminUser])
     def get_in_process_recipes(self, request):
         recipes = Recipe.objects.filter(moderation_status="in_process")
         serializer = RecipeSerializer(recipes, many=True, context={"request": request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @action(detail=False, methods=["get"], url_path="approved",
-            name="Approved recipes",
-            permission_classes=[IsAdminUser])
-    def get_approved_recipes(self, request):
-        recipes = Recipe.objects.filter(moderation_status="approved")
-        serializer = RecipeSerializer(recipes, many=True, context={"request": request})
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
     @action(detail=True, methods=["patch"], url_path="moderate", name="Moderate recipe",
-            permission_classes=[IsAdminUser])
+            permission_classes=[IsAuthenticated, IsAdminUser])
     def moderate(self, request, slug=None):
         recipe = self.get_object()
 
