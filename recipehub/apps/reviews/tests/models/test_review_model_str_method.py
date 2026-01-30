@@ -16,4 +16,3 @@ def test_review_model_str_method(username, rating, expected):
     review = ReviewFactory.create(user=user, rating=rating)
 
     assert str(review) == expected
-

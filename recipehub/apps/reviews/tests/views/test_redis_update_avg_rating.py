@@ -15,10 +15,7 @@ def test_review_creates_redis_rating(client, users_list, fake_redis):
 
         response = client.post(
             reverse("reviews:create-review"),
-            data={
-                "slug": recipe.slug,
-                "rating": 3
-            },
+            data={"slug": recipe.slug, "rating": 3},
             content_type="application/json",
         )
 

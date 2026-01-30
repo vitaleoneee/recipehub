@@ -20,11 +20,19 @@ def test_review_post_missing_fields(client, users_list):
     client.force_login(first_user)
 
     # Missing slug
-    response = client.post(reverse("reviews:create-review"), data={"rating": 3}, content_type="application/json")
+    response = client.post(
+        reverse("reviews:create-review"),
+        data={"rating": 3},
+        content_type="application/json",
+    )
     assert response.status_code == 400
 
     # Missing rating
-    response = client.post(reverse("reviews:create-review"), data={"slug": "fish"}, content_type="application/json")
+    response = client.post(
+        reverse("reviews:create-review"),
+        data={"slug": "fish"},
+        content_type="application/json",
+    )
     assert response.status_code == 400
 
 
