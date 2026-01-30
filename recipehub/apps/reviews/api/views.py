@@ -19,6 +19,24 @@ class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_staff:
+            return Review.objects.all()
+        return Review.objects.filter(user=user)
+
+    def get_permissions(self):
+        if self.action == "create":
+            return [permissions.IsAuthenticated()]
+        elif self.action in ["update", "partial_update", "destroy"]:
+            return [
+                permissions.IsAuthenticated(),
+                custom_permissions.IsAdminOrOwner(),
+            ]
+        elif self.action == "list":
+            return [permissions.IsAdminUser()]
+        return [permissions.IsAuthenticated()]
+
 
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
