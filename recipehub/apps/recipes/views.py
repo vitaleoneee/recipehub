@@ -78,7 +78,7 @@ def recipe_detail(request, slug):
     is_favorited = UserRecipeFavorite.objects.filter(
         user=request.user, recipe=recipe
     ).exists()
-    comments = Comment.objects.filter(recipe=recipe)
+    comments = Comment.objects.filter(recipe=recipe, active=True)
 
     if request.method == "POST":
         body = request.POST.get("body", "").strip()
