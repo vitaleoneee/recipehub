@@ -15,3 +15,13 @@ class ReviewSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data["user"] = self.context["request"].user
         return Review.objects.create(**validated_data)
+
+    def validate(self, attrs):
+        recipe = attrs["recipe"]
+        user = self.context["request"].user
+
+        if recipe.user == user:
+            raise serializers.ValidationError(
+                "You can't review yourself"
+            )
+        return attrs
