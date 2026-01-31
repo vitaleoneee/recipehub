@@ -12,8 +12,10 @@ from recipehub.apps.recipes.api.serializers import (
     RecipeSerializer,
     CategorySerializer,
     RecipeModerationSerializer,
+    UserRecipeFavoriteSerializer,
 )
 from recipehub.apps.recipes.models import Recipe, Category
+from recipehub.apps.users.models import UserRecipeFavorite
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
@@ -70,7 +72,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         permission_classes=[IsAuthenticated],
     )
     def my_recipes(self, request):
-        recipes = Recipe.objects.filter(user=self.request.user)
+        recipes = self.get_queryset().filter(user=self.request.user)
         serializer = RecipeSerializer(recipes, many=True, context={"request": request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -114,3 +116,46 @@ class RecipeViewSet(viewsets.ModelViewSet):
             },
             status=status.HTTP_200_OK,
         )
+
+    @action(
+        detail=True,
+        methods=["post", "delete"],
+        url_path="favorite",
+        permission_classes=[IsAuthenticated],
+    )
+    def favorite(self, request, slug=None):
+        recipe = self.get_object()
+        user = request.user
+
+        if recipe.user == user:
+            return Response(
+                {"detail": "You cannot add your recipe to favorites"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        favorite_qs = UserRecipeFavorite.objects.filter(user=user, recipe=recipe)
+
+        if request.method == "POST":
+            favorite, created = UserRecipeFavorite.objects.get_or_create(
+                user=user, recipe=recipe
+            )
+
+            if not created:
+                return Response(
+                    {"detail": "Recipe already in favorites"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            serializer = UserRecipeFavoriteSerializer(
+                favorite, context={"request": request}
+            )
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        if not favorite_qs.exists():
+            return Response(
+                {"detail": "Recipe not in favorites"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        favorite_qs.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
