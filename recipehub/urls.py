@@ -8,6 +8,10 @@ from drf_spectacular.views import (
     SpectacularRedocView,
 )
 from rest_framework.routers import DefaultRouter
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
 
 from recipehub.apps.recipes.api.views import RecipeViewSet, CategoryViewSet
 from recipehub.apps.reviews.api.views import ReviewViewSet, CommentViewSet
@@ -37,6 +41,8 @@ urlpatterns = [
         SpectacularRedocView.as_view(url_name="schema"),
         name="redoc",
     ),
+    path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
 ]
 
 if settings.DEBUG:
