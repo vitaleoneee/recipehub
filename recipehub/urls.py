@@ -15,6 +15,7 @@ from rest_framework_simplejwt.views import (
 
 from recipehub.apps.recipes.api.views import RecipeViewSet, CategoryViewSet
 from recipehub.apps.reviews.api.views import ReviewViewSet, CommentViewSet
+from recipehub.apps.users.api.auth_views import register
 from recipehub.apps.users.api.views import UserViewSet
 
 router = DefaultRouter()
@@ -41,9 +42,13 @@ urlpatterns = [
         SpectacularRedocView.as_view(url_name="schema"),
         name="redoc",
     ),
-    path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
-    path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    path("api/auth/register", register, name="register"),
+    path("api/auth/login", TokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path("api/auth/refresh", TokenRefreshView.as_view(), name="token_refresh"),
 ]
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += [
+        path("__debug__/", include("debug_toolbar.urls")),
+    ]

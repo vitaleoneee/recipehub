@@ -36,6 +36,7 @@ dev = [
     "faker",
     "flower>=2.0.1",
     "freezegun",
+    "django-debug-toolbar",
 ]
 
 [tool.ruff]
