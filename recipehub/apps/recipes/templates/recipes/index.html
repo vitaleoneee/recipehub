@@ -1,98 +1,99 @@
 {% extends "base.html" %}
+{% load cache %}
 
 {% block content %}
 
     <!-- Opening words -->
-    <div class="p-5 mb-4 bg-light rounded-3 border">
-        <div class="container-fluid py-4">
-            <h1 class="display-6 fw-bold">
-                Cook smarter with <span class="logo">RecipeHub</span> 🍽️
-            </h1>
-            <p class="col-md-10 fs-5">
-                Discover thousands of recipes, save your favorites and build dishes from ingredients you already have.
-            </p>
-            <div class="d-flex gap-2 flex-wrap">
-                <a href="{% url 'recipes:recipes-list' %}" class="btn btn-orange btn-lg">Browse Recipes</a>
-                <a href="{% url 'recipes:recipe-builder' %}" class="btn btn-outline-secondary btn-lg">Recipe Builder</a>
+    {% cache 3600 hero_block %}
+        <div class="p-5 mb-4 bg-light rounded-3 border">
+            <div class="container-fluid py-4">
+                <h1 class="display-6 fw-bold">
+                    Cook smarter with <span class="logo">RecipeHub</span> 🍽️
+                </h1>
+                <p class="col-md-10 fs-5">
+                    Discover thousands of recipes, save your favorites and build dishes from ingredients you already
+                    have.
+                </p>
+                <div class="d-flex gap-2 flex-wrap">
+                    <a href="{% url 'recipes:recipes-list' %}" class="btn btn-orange btn-lg">Browse Recipes</a>
+                    <a href="{% url 'recipes:recipe-builder' %}" class="btn btn-outline-secondary btn-lg">Recipe
+                        Builder</a>
+                </div>
             </div>
         </div>
-    </div>
+    {% endcache %}
 
     <!-- Features -->
-    <div class="row text-center mb-4">
-        <div class="col-md-4 mb-3">
-            <i class="fa-solid fa-magnifying-glass fa-2x mb-2 text-warning"></i>
-            <h5>Smart Search</h5>
-            <p class="text-muted">
-                Find recipes by name or ingredients in seconds.
-            </p>
-        </div>
+    {% cache 3600 features_block %}
+        <div class="row text-center mb-4">
+            <div class="col-md-4 mb-3">
+                <i class="fa-solid fa-magnifying-glass fa-2x mb-2 text-warning"></i>
+                <h5>Smart Search</h5>
+                <p class="text-muted">Find recipes by name or ingredients in seconds.</p>
+            </div>
 
-        <div class="col-md-4 mb-3">
-            <i class="fa-solid fa-blender fa-2x mb-2 text-warning"></i>
-            <h5>Recipe Builder</h5>
-            <p class="text-muted">
-                Enter ingredients you have and get the best matching recipes.
-            </p>
-        </div>
+            <div class="col-md-4 mb-3">
+                <i class="fa-solid fa-blender fa-2x mb-2 text-warning"></i>
+                <h5>Recipe Builder</h5>
+                <p class="text-muted">Enter ingredients you have and get the best matching recipes.</p>
+            </div>
 
-        <div class="col-md-4 mb-3">
-            <i class="fa-solid fa-bookmark fa-2x mb-2 text-warning"></i>
-            <h5>Save Favorites</h5>
-            <p class="text-muted">
-                Keep your favorite recipes and access them anytime.
-            </p>
+            <div class="col-md-4 mb-3">
+                <i class="fa-solid fa-bookmark fa-2x mb-2 text-warning"></i>
+                <h5>Save Favorites</h5>
+                <p class="text-muted">Keep your favorite recipes and access them anytime.</p>
+            </div>
         </div>
-    </div>
+    {% endcache %}
 
     <!-- Popular categories -->
-    <h3 class="mb-3">Popular Categories</h3>
-
-    <div class="row g-3 mb-4">
-        <div class="col-md-3 col-6">
-            <div class="card h-100 text-center">
-                <div class="card-body">
-                    <i class="fa-solid fa-pizza-slice fa-2x mb-2 text-danger"></i>
-                    <h6>Italian</h6>
+    {% cache 3600 categories_block %}
+        <h3 class="mb-3">Popular Categories</h3>
+        <div class="row g-3 mb-4">
+            <div class="col-md-3 col-6">
+                <div class="card h-100 text-center">
+                    <div class="card-body">
+                        <i class="fa-solid fa-pizza-slice fa-2x mb-2 text-danger"></i>
+                        <h6>Italian</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="card h-100 text-center">
+                    <div class="card-body">
+                        <i class="fa-solid fa-fish fa-2x mb-2 text-info"></i>
+                        <h6>Seafood</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="card h-100 text-center">
+                    <div class="card-body">
+                        <i class="fa-solid fa-leaf fa-2x mb-2 text-success"></i>
+                        <h6>Vegetarian</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="card h-100 text-center">
+                    <div class="card-body">
+                        <i class="fa-solid fa-burger fa-2x mb-2 text-warning"></i>
+                        <h6>Fast Food</h6>
+                    </div>
                 </div>
             </div>
         </div>
+    {% endcache %}
 
-        <div class="col-md-3 col-6">
-            <div class="card h-100 text-center">
-                <div class="card-body">
-                    <i class="fa-solid fa-fish fa-2x mb-2 text-info"></i>
-                    <h6>Seafood</h6>
-                </div>
-            </div>
+    <!-- Call to action  -->
+    {% cache 3600 cta_block %}
+        <div class="p-4 bg-dark text-light rounded text-center">
+            <h4 class="mb-2">Do you have something to share with others?</h4>
+            <p class="mb-3 text-muted">
+                Create an account and start building your personal recipe collection.
+            </p>
+            <a href="{% url 'recipes:recipe-add' %}" class="btn btn-orange btn-lg">Add a recipe</a>
         </div>
-
-        <div class="col-md-3 col-6">
-            <div class="card h-100 text-center">
-                <div class="card-body">
-                    <i class="fa-solid fa-leaf fa-2x mb-2 text-success"></i>
-                    <h6>Vegetarian</h6>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-3 col-6">
-            <div class="card h-100 text-center">
-                <div class="card-body">
-                    <i class="fa-solid fa-burger fa-2x mb-2 text-warning"></i>
-                    <h6>Fast Food</h6>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Call to action -->
-    <div class="p-4 bg-dark text-light rounded text-center">
-        <h4 class="mb-2">Do you have something to share with others?</h4>
-        <p class="mb-3 text-muted">
-            Create an account and start building your personal recipe collection.
-        </p>
-        <a href="{% url 'recipes:recipe-add' %}" class="btn btn-orange btn-lg">Add a recipe</a>
-    </div>
+    {% endcache %}
 
 {% endblock content %}

@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.postgres.search import SearchVector
+from django.core.cache import cache
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.db.models.aggregates import Avg
@@ -28,15 +29,20 @@ class RecipesList(ListView):
     def get_queryset(self):
         ingredients = self.request.GET.getlist("ingredients")
         search_query = self.request.GET.get("search", "")
-        queryset = Recipe.objects.filter(moderation_status="approved").select_related(
-            "user", "category"
-        )
+        # queryset = Recipe.objects.filter(moderation_status="approved").select_related(
+        #     "user", "category"
+        # )
+        queryset = cache.get_or_set(key="recipes_list",
+                                    default=Recipe.objects.filter(moderation_status="approved").select_related(
+                                        "user", "category"
+                                    ),
+                                    timeout=60 * 10)
 
         if search_query:
             queryset = queryset.annotate(
                 search=SearchVector("name")
-                + SearchVector("ingredients")
-                + SearchVector("recipe_text")
+                       + SearchVector("ingredients")
+                       + SearchVector("recipe_text")
             ).filter(search=search_query)
         elif ingredients:
             # Search all recipes with specific ingredients
