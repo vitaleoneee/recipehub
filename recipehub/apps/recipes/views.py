@@ -29,14 +29,10 @@ class RecipesList(ListView):
     def get_queryset(self):
         ingredients = self.request.GET.getlist("ingredients")
         search_query = self.request.GET.get("search", "")
-        # queryset = Recipe.objects.filter(moderation_status="approved").select_related(
-        #     "user", "category"
-        # )
-        queryset = cache.get_or_set(key="recipes_list",
-                                    default=Recipe.objects.filter(moderation_status="approved").select_related(
-                                        "user", "category"
-                                    ),
-                                    timeout=60 * 10)
+
+        queryset = Recipe.objects.filter(
+            moderation_status="approved"
+        ).select_related("user", "category")
 
         if search_query:
             queryset = queryset.annotate(
@@ -45,13 +41,10 @@ class RecipesList(ListView):
                        + SearchVector("recipe_text")
             ).filter(search=search_query)
         elif ingredients:
-            # Search all recipes with specific ingredients
             q = Q()
             for ing in ingredients:
                 q |= Q(ingredients__icontains=ing)
-            queryset = Recipe.objects.filter(
-                q, moderation_status="approved"
-            ).select_related("user", "category")
+            queryset = queryset.filter(q)
 
         return queryset
 
