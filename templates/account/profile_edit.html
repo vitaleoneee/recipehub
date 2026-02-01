@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}
-    <title>Edit Profile - {{ request.user.username }}</title>
+    <title>Edit Profile - {{ object.username }}</title>
 {% endblock title %}
 
 {% block content %}
@@ -25,8 +25,8 @@
 
                 <!-- Avatar preview -->
                 <div class="mb-4 text-center">
-                    {% if request.user.photo %}
-                        <img src="{{ request.user.photo.url }}"
+                    {% if object.photo %}
+                        <img src="{{ object.photo.url }}"
                              class="rounded-circle mb-3 profile-avatar"
                              alt="Avatar">
                     {% else %}
@@ -44,7 +44,7 @@
                 <div class="mb-3">
                     <label for="id_username" class="form-label">Username</label>
                     <input type="text" name="username" id="id_username" class="form-control"
-                           value="{{ form.username.value|default:request.user.username }}">
+                           value="{{ form.username.value|default:object.username }}">
                     {% if form.username.errors %}
                         <div class="text-danger mt-1">
                             {% for error in form.username.errors %}
@@ -58,7 +58,7 @@
                 <div class="mb-3">
                     <label for="id_email" class="form-label">Email</label>
                     <input type="email" name="email" id="id_email" class="form-control"
-                           value="{{ form.email.value|default:request.user.email }}">
+                           value="{{ form.email.value|default:object.email }}">
                     {% if form.email.errors %}
                         <div class="text-danger mt-1">
                             {% for error in form.email.errors %}
@@ -72,7 +72,7 @@
                 <div class="mb-3">
                     <label for="id_date_of_birth" class="form-label">Date of Birth</label>
                     <input type="date" name="date_of_birth" id="id_date_of_birth" class="form-control"
-                           value="{{ form.date_of_birth.value|default:request.user.date_of_birth|date:'Y-m-d' }}">
+                           value="{{ form.date_of_birth.value|default:object.date_of_birth|date:'Y-m-d' }}">
                     {% if form.date_of_birth.errors %}
                         <div class="text-danger mt-1">
                             {% for error in form.date_of_birth.errors %}

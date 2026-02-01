@@ -1,5 +1,6 @@
 import json
 from django.contrib.auth import get_user_model
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.views.generic.edit import UpdateView
 from django.http import JsonResponse
@@ -12,6 +13,7 @@ from recipehub.apps.recipes.models import Recipe
 User = get_user_model()
 
 
+@login_required
 def profile(request):
     pending_recipes = Recipe.objects.filter(
         user=request.user, moderation_status="in_process"
@@ -21,15 +23,18 @@ def profile(request):
     )
 
 
-class ProfileUpdateView(UpdateView):
+class ProfileUpdateView(LoginRequiredMixin, UpdateView):
     model = User
     fields = ["username", "email", "date_of_birth", "photo"]
     template_name = "account/profile_edit.html"
     success_url = "/"
 
 
+@login_required
 def saved_recipes(request):
-    saved = UserRecipeFavorite.objects.filter(user=request.user)
+    saved = UserRecipeFavorite.objects.select_related(
+        "recipe", "recipe__category", "recipe__user"
+    ).filter(user=request.user)
     return render(request, "users/saved_recipes.html", context={"saved_recipes": saved})
 
 

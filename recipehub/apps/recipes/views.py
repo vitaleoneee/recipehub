@@ -28,7 +28,9 @@ class RecipesList(ListView):
     def get_queryset(self):
         ingredients = self.request.GET.getlist("ingredients")
         search_query = self.request.GET.get("search", "")
-        queryset = Recipe.objects.filter(moderation_status="approved")
+        queryset = Recipe.objects.filter(moderation_status="approved").select_related(
+            "user", "category"
+        )
 
         if search_query:
             queryset = queryset.annotate(
@@ -41,7 +43,9 @@ class RecipesList(ListView):
             q = Q()
             for ing in ingredients:
                 q |= Q(ingredients__icontains=ing)
-            queryset = Recipe.objects.filter(q, moderation_status="approved")
+            queryset = Recipe.objects.filter(
+                q, moderation_status="approved"
+            ).select_related("user", "category")
 
         return queryset
 
