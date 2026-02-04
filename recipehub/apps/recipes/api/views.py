@@ -15,6 +15,7 @@ from recipehub.apps.recipes.api.serializers import (
     UserRecipeFavoriteSerializer,
 )
 from recipehub.apps.recipes.models import Recipe, Category
+from recipehub.apps.recipes.utils import get_best_recipes
 from recipehub.apps.users.models import UserRecipeFavorite
 
 
@@ -76,6 +77,20 @@ class RecipeViewSet(viewsets.ModelViewSet):
         serializer = RecipeSerializer(recipes, many=True, context={"request": request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @action(
+        detail=False,
+        methods=["get"],
+        url_path="best-recipes",
+        name="Best recipes",
+        permission_classes=[IsAuthenticated],
+    )
+    def get_best_recipes(self, request):
+        best_recipes = get_best_recipes()
+        serializer = RecipeSerializer(
+            best_recipes, many=True, context={"request": request}
+        )
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
     # Moderation block
     @action(
         detail=False,
@@ -117,6 +132,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             status=status.HTTP_200_OK,
         )
 
+    # Add and Delete from "Favorites" block
     @action(
         detail=True,
         methods=["post", "delete"],

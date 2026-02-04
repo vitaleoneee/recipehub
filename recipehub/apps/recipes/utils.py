@@ -4,6 +4,10 @@ import uuid
 from django.utils.text import slugify
 from typing import Any
 from django.core.exceptions import ValidationError
+from django.core.cache import cache
+
+from django.apps import apps
+from recipehub.redis import r
 
 
 def valid_extension(filename: str) -> str:
@@ -75,3 +79,28 @@ def validate_ingredients_format(value: str) -> str:
         normalized_lines.append(f"{name.lower()} - {quantity}")
 
     return "\n".join(normalized_lines)
+
+
+def get_best_recipes():
+    """
+    Returns top 4 rated recipes from Redis.
+    """
+
+    Recipe = apps.get_model("recipes", "Recipe")
+
+    best_recipes = cache.get("best_recipes")
+    if not best_recipes:
+        top_ids = r.zrevrange("recipe:ratings", 0, 3)
+
+        if not top_ids:
+            return []
+
+        top_ids = [int(i) for i in top_ids]
+        recipes = Recipe.objects.filter(id__in=top_ids)
+
+        recipe_map = {recipe.id: recipe for recipe in recipes}
+        best_recipes = [recipe_map[i] for i in top_ids if i in recipe_map]
+
+        cache.set("best_recipes", best_recipes, 60 * 10)
+
+    return best_recipes
