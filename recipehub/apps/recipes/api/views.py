@@ -1,3 +1,5 @@
+from django.db.models import Q
+
 import recipehub.api_permissions as custom_permissions
 from django.db import transaction
 from django_filters.rest_framework import DjangoFilterBackend
@@ -175,3 +177,22 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
         favorite_qs.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    # Recipe Builder block
+    @action(
+        detail=False,
+        methods=["get"],
+        url_path="builder",
+        name="Recipe builder",
+        permission_classes=[IsAuthenticated],
+    )
+    def recipe_builder(self, request):
+        ingredients = request.query_params.get("ingredients", "").split(",")
+        q = Q()
+        for ing in ingredients:
+            q |= Q(ingredients__icontains=ing)
+        queryset = Recipe.objects.select_related("user", "category") \
+            .filter(moderation_status="approved") \
+            .filter(q)
+        serializer = RecipeSerializer(queryset, many=True, context={"request": request})
+        return Response({"recipes": serializer.data}, status=status.HTTP_200_OK)
