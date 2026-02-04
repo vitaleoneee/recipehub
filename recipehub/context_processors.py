@@ -7,6 +7,9 @@ def redis_best_recipes(request):
     """
     Returns top 4 rated recipes from Redis.
     """
+    if request.path.startswith('/api/') and not getattr(request, 'needs_context_processor', False):
+        return {}
+
     best_recipes = cache.get("best_recipes")
     if not best_recipes:
         top_ids = r.zrevrange("recipe:ratings", 0, 3)
