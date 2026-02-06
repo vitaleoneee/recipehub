@@ -16,7 +16,7 @@ APPROVED_CHOICES = [
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
-    slug = models.SlugField(max_length=100, unique=True, blank=True)
+    slug = models.SlugField(max_length=100, unique=True, blank=True, null=True)
 
     def save(self, *args, **kwargs):
         if not self.slug:
