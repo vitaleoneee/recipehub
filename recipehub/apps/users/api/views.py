@@ -50,8 +50,8 @@ class UserViewSet(viewsets.ModelViewSet):
 
         page = self.paginate_queryset(queryset)
         if page is not None:
-            serializer = RecipeSerializer(page, many=True, context={"request": request})
+            serializer = RecipeSerializer(page, many=True)
             return self.get_paginated_response(serializer.data)
 
-        serializer = RecipeSerializer(queryset, many=True, context={"request": request})
+        serializer = RecipeSerializer(queryset, many=True)
         return Response(serializer.data)

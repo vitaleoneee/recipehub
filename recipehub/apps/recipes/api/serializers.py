@@ -14,11 +14,8 @@ class CategorySerializer(serializers.HyperlinkedModelSerializer):
         read_only_fields = ["slug"]
 
 
-class RecipeSerializer(serializers.HyperlinkedModelSerializer):
+class RecipeSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField(read_only=True)
-    category = serializers.HyperlinkedRelatedField(
-        view_name="category-detail", queryset=Category.objects.all()
-    )
 
     class Meta:
         model = Recipe

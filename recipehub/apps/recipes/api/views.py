@@ -55,11 +55,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
             return [permissions.AllowAny()]
         elif self.action in ["create", "retrieve"]:
             return [permissions.IsAuthenticated()]
-        elif self.action == "destroy":
-            return [
-                permissions.IsAuthenticated(),
-                custom_permissions.IsAdminOrOwner(),
-            ]
         elif self.action in ["update", "partial_update", "destroy"]:
             return [
                 permissions.IsAuthenticated(),
@@ -76,7 +71,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     )
     def my_recipes(self, request):
         recipes = self.get_queryset().filter(user=self.request.user)
-        serializer = RecipeSerializer(recipes, many=True, context={"request": request})
+        serializer = RecipeSerializer(recipes, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(
@@ -89,7 +84,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def get_best_recipes(self, request):
         best_recipes = get_best_recipes()
         serializer = RecipeSerializer(
-            best_recipes, many=True, context={"request": request}
+            best_recipes, many=True,
         )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -103,7 +98,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     )
     def get_in_process_recipes(self, request):
         recipes = Recipe.objects.filter(moderation_status="in_process")
-        serializer = RecipeSerializer(recipes, many=True, context={"request": request})
+        serializer = RecipeSerializer(recipes, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(
@@ -165,7 +160,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 )
 
             serializer = UserRecipeFavoriteSerializer(
-                favorite, context={"request": request}
+                favorite
             )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -194,5 +189,5 @@ class RecipeViewSet(viewsets.ModelViewSet):
         queryset = Recipe.objects.select_related("user", "category") \
             .filter(moderation_status="approved") \
             .filter(q)
-        serializer = RecipeSerializer(queryset, many=True, context={"request": request})
+        serializer = RecipeSerializer(queryset, many=True)
         return Response({"recipes": serializer.data}, status=status.HTTP_200_OK)
