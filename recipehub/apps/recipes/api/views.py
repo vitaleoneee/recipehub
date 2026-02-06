@@ -51,6 +51,17 @@ class RecipeViewSet(viewsets.ModelViewSet):
         return Recipe.objects.filter(moderation_status="approved")
 
     def get_permissions(self):
+        # For custom actions use permissions from the decorator
+        if self.action not in [
+            "list",
+            "retrieve",
+            "create",
+            "update",
+            "partial_update",
+            "destroy",
+        ]:
+            return super().get_permissions()
+
         if self.action in ["list"]:
             return [permissions.AllowAny()]
         elif self.action in ["create", "retrieve"]:
@@ -84,7 +95,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def get_best_recipes(self, request):
         best_recipes = get_best_recipes()
         serializer = RecipeSerializer(
-            best_recipes, many=True,
+            best_recipes,
+            many=True,
         )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -159,9 +171,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            serializer = UserRecipeFavoriteSerializer(
-                favorite
-            )
+            serializer = UserRecipeFavoriteSerializer(favorite)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         if not favorite_qs.exists():
@@ -186,8 +196,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
         q = Q()
         for ing in ingredients:
             q |= Q(ingredients__icontains=ing)
-        queryset = Recipe.objects.select_related("user", "category") \
-            .filter(moderation_status="approved") \
+        queryset = (
+            Recipe.objects.select_related("user", "category")
+            .filter(moderation_status="approved")
             .filter(q)
+        )
         serializer = RecipeSerializer(queryset, many=True)
         return Response({"recipes": serializer.data}, status=status.HTTP_200_OK)

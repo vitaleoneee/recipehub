@@ -2,7 +2,8 @@ import pytest
 from rest_framework import status
 
 from recipehub.apps.recipes.models import Recipe
-from recipehub.factories import RecipeFactory
+from recipehub.apps.users.models import UserRecipeFavorite
+from recipehub.factories import RecipeFactory, CategoryFactory
 
 ENDPOINT = "/api/recipes/"
 
@@ -16,8 +17,59 @@ class TestPaginationRecipeList:
         response = authenticated_client.get(ENDPOINT)
 
         assert response.status_code == status.HTTP_200_OK
-        assert all(key in response.data for key in ['count', 'previous', 'next', 'results'])
+        assert all(
+            key in response.data for key in ["count", "previous", "next", "results"]
+        )
         assert len(response.data["results"]) <= self.PAGE_SIZE
+
+
+@pytest.mark.django_db
+class TestSearchRecipeList:
+    def test_search_recipes(self, authenticated_client):
+        RecipeFactory(name="Tomato Soup", moderation_status="approved")
+        RecipeFactory(name="Chicken Soup", moderation_status="approved")
+        response = authenticated_client.get(f"{ENDPOINT}?search=tomato")
+
+        assert response.status_code == status.HTTP_200_OK
+        assert len(response.data["results"]) == 1
+        assert response.data["results"][0]["name"] == "Tomato Soup"
+
+
+@pytest.mark.django_db
+class TestOrderingRecipeList:
+    def test_ordering_recipe(self, authenticated_client):
+        r1 = RecipeFactory(
+            name="A Recipe", cooking_time=10, moderation_status="approved"
+        )
+        r2 = RecipeFactory(
+            name="B Recipe", cooking_time=5, moderation_status="approved"
+        )
+
+        response = authenticated_client.get(f"{ENDPOINT}?ordering=-cooking_time")
+        assert response.status_code == status.HTTP_200_OK
+        results = response.data["results"]
+        assert results[0]["name"] == r1.name
+        assert results[1]["name"] == r2.name
+
+
+@pytest.mark.django_db
+class TestFilteringRecipeList:
+    def test_filter_category_and_cooking_time(self, authenticated_client):
+        category = CategoryFactory(name="Dessert")
+        r1 = RecipeFactory(
+            category=category, cooking_time=10, moderation_status="approved"
+        )
+        r2 = RecipeFactory(cooking_time=15, moderation_status="approved")
+
+        response = authenticated_client.get(f"{ENDPOINT}?category__name=Dessert")
+        assert response.status_code == status.HTTP_200_OK
+        assert len(response.data["results"]) == 1
+        assert response.data["results"][0]["name"] == r1.name
+
+        response = authenticated_client.get(f"{ENDPOINT}?cooking_time__gte=12")
+        assert response.status_code == status.HTTP_200_OK
+        assert len(response.data["results"]) == 1
+        assert response.data["results"][0]["name"] == r2.name
 
 
 @pytest.mark.django_db
@@ -32,7 +84,7 @@ class TestRecipePermissions:
         ],
     )
     def test_retrieve_permissions(
-            self, client_fixture, expected_status, recipe, request
+        self, client_fixture, expected_status, recipe, request
     ):
         client = request.getfixturevalue(client_fixture)
         response = client.get(f"{ENDPOINT}{recipe.slug}/")
@@ -46,7 +98,7 @@ class TestRecipePermissions:
         ],
     )
     def test_create_permissions(
-            self, client_fixture, expected_status, recipe_data, request
+        self, client_fixture, expected_status, recipe_data, request
     ):
         client = request.getfixturevalue(client_fixture)
         response = client.post(ENDPOINT, data=recipe_data, format="json")
@@ -60,7 +112,7 @@ class TestRecipePermissions:
         ],
     )
     def test_update_permissions(
-            self, client_fixture, expected_status, recipe, recipe_data, request
+        self, client_fixture, expected_status, recipe, recipe_data, request
     ):
         client = request.getfixturevalue(client_fixture)
         response = client.put(f"{ENDPOINT}{recipe.slug}/", recipe_data, format="json")
@@ -74,12 +126,10 @@ class TestRecipePermissions:
         ],
     )
     def test_patch_permissions(
-            self, client_fixture, expected_status, recipe, recipe_data, request
+        self, client_fixture, expected_status, recipe, recipe_data, request
     ):
         client = request.getfixturevalue(client_fixture)
-        response = client.patch(
-            f"{ENDPOINT}{recipe.slug}/", recipe_data, format="json"
-        )
+        response = client.patch(f"{ENDPOINT}{recipe.slug}/", recipe_data, format="json")
         assert response.status_code == expected_status
 
     @pytest.mark.parametrize(
@@ -91,9 +141,7 @@ class TestRecipePermissions:
             ("admin_client", status.HTTP_204_NO_CONTENT),
         ],
     )
-    def test_delete_permissions(
-            self, client_fixture, expected_status, recipe, request
-    ):
+    def test_delete_permissions(self, client_fixture, expected_status, recipe, request):
         client = request.getfixturevalue(client_fixture)
         response = client.delete(f"{ENDPOINT}{recipe.slug}/")
         assert response.status_code == expected_status
@@ -101,7 +149,6 @@ class TestRecipePermissions:
 
 @pytest.mark.django_db
 class TestDefaultUserRecipeOperations:
-
     def test_list_recipes(self, api_client, recipes):
         response = api_client.get(ENDPOINT)
 
@@ -200,7 +247,6 @@ class TestDefaultUserRecipeOperations:
 
 @pytest.mark.django_db
 class TestAdminUserRecipeOperations:
-
     def test_admin_list_all_recipes(self, admin_client, recipes):
         response = admin_client.get(ENDPOINT)
 
@@ -252,3 +298,222 @@ class TestAdminUserRecipeOperations:
         assert response.status_code == status.HTTP_201_CREATED
         assert response.data["name"] == name
         assert Recipe.objects.filter(name=name).exists()
+
+
+@pytest.mark.django_db
+class TestRecipeCustomActions:
+    """Tests for custom actions in RecipeViewSet"""
+
+    # My Recipes action tests
+    def test_my_recipes_permissions(self, api_client):
+        """Unauthorized users cannot access my-recipes"""
+        response = api_client.get(f"{ENDPOINT}my-recipes/")
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    def test_my_recipes_authenticated(self, authenticated_client, users_list):
+        """User can see only their own recipes"""
+        user = users_list["first_simple_user"]
+
+        # Create recipes for current user
+        RecipeFactory.create_batch(3, user=user, moderation_status="approved")
+
+        # Create recipes for other users
+        RecipeFactory.create_batch(2, moderation_status="approved")
+
+        response = authenticated_client.get(f"{ENDPOINT}my-recipes/")
+
+        assert response.status_code == status.HTTP_200_OK
+        assert len(response.data) == 3
+        assert Recipe.objects.filter(user=user).count() == 3
+
+    def test_my_recipes_empty(self, authenticated_client):
+        """User with no recipes gets empty list"""
+        response = authenticated_client.get(f"{ENDPOINT}my-recipes/")
+
+        assert response.status_code == status.HTTP_200_OK
+        assert len(response.data) == 0
+
+    # Best Recipes action tests
+    def test_best_recipes_permissions(self, api_client):
+        """Unauthorized users cannot access best-recipes"""
+        response = api_client.get(f"{ENDPOINT}best-recipes/")
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    def test_best_recipes_authenticated(self, authenticated_client):
+        """Authenticated user can access best recipes"""
+        RecipeFactory.create_batch(5, moderation_status="approved")
+
+        response = authenticated_client.get(f"{ENDPOINT}best-recipes/")
+
+        assert response.status_code == status.HTTP_200_OK
+        assert isinstance(response.data, list)
+
+    # Moderation: in-process recipes
+    def test_in_process_recipes_permissions(self, authenticated_client):
+        """Regular users cannot access in-process recipes"""
+        response = authenticated_client.get(f"{ENDPOINT}in-process/")
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+
+    def test_in_process_recipes_admin(self, admin_client):
+        """Admin can see recipes in moderation"""
+        RecipeFactory.create_batch(2, moderation_status="in_process")
+        RecipeFactory.create_batch(3, moderation_status="approved")
+
+        response = admin_client.get(f"{ENDPOINT}in-process/")
+
+        assert response.status_code == status.HTTP_200_OK
+        assert len(response.data) == 2
+        assert all(
+            recipe["moderation_status"] == "in_process" for recipe in response.data
+        )
+
+    # Moderation: moderate action
+    def test_moderate_recipe_permissions(self, authenticated_client, recipe):
+        """Regular users cannot moderate recipes"""
+        response = authenticated_client.patch(
+            f"{ENDPOINT}{recipe.slug}/moderate/", {"status": "approved"}, format="json"
+        )
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+
+    def test_moderate_recipe_admin(self, admin_client):
+        """Admin can moderate recipes"""
+        recipe = RecipeFactory(moderation_status="in_process")
+
+        response = admin_client.patch(
+            f"{ENDPOINT}{recipe.slug}/moderate/", {"status": "approved"}, format="json"
+        )
+
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data["status"] == "approved"
+        assert response.data["slug"] == recipe.slug
+
+        recipe.refresh_from_db()
+        assert recipe.moderation_status == "approved"
+
+    def test_moderate_recipe_invalid_status(self, admin_client, recipe):
+        """Invalid moderation status returns validation error"""
+        response = admin_client.patch(
+            f"{ENDPOINT}{recipe.slug}/moderate/",
+            {"status": "invalid_status"},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    # Favorites: add to favorites
+    def test_add_to_favorites_permissions(self, api_client, recipe):
+        """Unauthorized users cannot add to favorites"""
+        response = api_client.post(f"{ENDPOINT}{recipe.slug}/favorite/")
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    def test_add_to_favorites(self, authenticated_client, recipe):
+        """User can add recipe to favorites"""
+        response = authenticated_client.post(f"{ENDPOINT}{recipe.slug}/favorite/")
+
+        assert response.status_code == status.HTTP_201_CREATED
+        assert "user" in response.data
+        assert "recipe" in response.data
+        assert UserRecipeFavorite.objects.filter(
+            user=authenticated_client.handler._force_user, recipe=recipe
+        ).exists()
+
+    def test_add_own_recipe_to_favorites(self, recipe_owner_client, recipe):
+        """User cannot add their own recipe to favorites"""
+        response = recipe_owner_client.post(f"{ENDPOINT}{recipe.slug}/favorite/")
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert "cannot add your recipe to favorites" in response.data["detail"].lower()
+
+    def test_add_already_favorited_recipe(
+        self, authenticated_client, recipe, users_list
+    ):
+        """Cannot add same recipe to favorites twice"""
+        user = users_list["first_simple_user"]
+        UserRecipeFavorite.objects.create(user=user, recipe=recipe)
+
+        response = authenticated_client.post(f"{ENDPOINT}{recipe.slug}/favorite/")
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert "already in favorites" in response.data["detail"].lower()
+
+    # Favorites: remove from favorites
+    def test_remove_from_favorites(self, authenticated_client, recipe, users_list):
+        """User can remove recipe from favorites"""
+        user = users_list["first_simple_user"]
+        UserRecipeFavorite.objects.create(user=user, recipe=recipe)
+
+        response = authenticated_client.delete(f"{ENDPOINT}{recipe.slug}/favorite/")
+
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        assert not UserRecipeFavorite.objects.filter(user=user, recipe=recipe).exists()
+
+    def test_remove_not_favorited_recipe(self, authenticated_client, recipe):
+        """Cannot remove recipe that's not in favorites"""
+        response = authenticated_client.delete(f"{ENDPOINT}{recipe.slug}/favorite/")
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert "not in favorites" in response.data["detail"].lower()
+
+    def test_remove_favorite_not_owned_recipe(
+        self, authenticated_client, recipe, users_list
+    ):
+        """Cannot remove favorite that belongs to another user"""
+        other_user = users_list["second_simple_user"]
+        UserRecipeFavorite.objects.create(user=other_user, recipe=recipe)
+        response = authenticated_client.delete(f"{ENDPOINT}{recipe.slug}/favorite/")
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert "not in favorites" in response.data["detail"].lower()
+
+    # Recipe Builder action tests
+    def test_recipe_builder_permissions(self, api_client):
+        """Unauthorized users cannot access recipe builder"""
+        response = api_client.get(f"{ENDPOINT}builder/?ingredients=tomato,cheese")
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    def test_recipe_builder_with_ingredients(self, authenticated_client):
+        """Recipe builder returns recipes with specified ingredients"""
+        RecipeFactory(ingredients="tomato, cheese, basil", moderation_status="approved")
+        RecipeFactory(ingredients="chicken, garlic", moderation_status="approved")
+        RecipeFactory(ingredients="tomato, onion", moderation_status="approved")
+
+        response = authenticated_client.get(
+            f"{ENDPOINT}builder/?ingredients=tomato,cheese"
+        )
+
+        assert response.status_code == status.HTTP_200_OK
+        assert "recipes" in response.data
+        assert len(response.data["recipes"]) == 2
+
+    def test_recipe_builder_no_ingredients(self, authenticated_client):
+        """Recipe builder with no ingredients returns empty or all recipes"""
+        RecipeFactory.create_batch(3, moderation_status="approved")
+
+        response = authenticated_client.get(f"{ENDPOINT}builder/")
+
+        assert response.status_code == status.HTTP_200_OK
+        assert "recipes" in response.data
+        assert len(response.data["recipes"]) == 3
+
+    def test_recipe_builder_no_matches(self, authenticated_client):
+        """Recipe builder returns empty when no recipes match"""
+        RecipeFactory(ingredients="tomato, cheese", moderation_status="approved")
+
+        response = authenticated_client.get(
+            f"{ENDPOINT}builder/?ingredients=banana,strawberry"
+        )
+
+        assert response.status_code == status.HTTP_200_OK
+        assert "recipes" in response.data
+        assert len(response.data["recipes"]) == 0
+
+    def test_recipe_builder_only_approved_recipes(self, authenticated_client):
+        """Recipe builder returns only approved recipes"""
+        RecipeFactory(ingredients="tomato", moderation_status="approved")
+        RecipeFactory(ingredients="tomato", moderation_status="in_process")
+        RecipeFactory(ingredients="tomato", moderation_status="rejected")
+
+        response = authenticated_client.get(f"{ENDPOINT}builder/?ingredients=tomato")
+
+        assert response.status_code == status.HTTP_200_OK
+        assert len(response.data["recipes"]) == 1
+        assert response.data["recipes"][0]["moderation_status"] == "approved"

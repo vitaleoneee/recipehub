@@ -49,9 +49,7 @@ class TestCategoryPermissions:
             ("admin_client", status.HTTP_204_NO_CONTENT),
         ],
     )
-    def test_delete_permissions(
-            self, client_fixture, expected_status, request
-    ):
+    def test_delete_permissions(self, client_fixture, expected_status, request):
         category = CategoryFactory()
         client = request.getfixturevalue(client_fixture)
         response = client.delete(f"{ENDPOINT}{category.id}/")
@@ -66,7 +64,7 @@ class TestCategoryPermissions:
         ],
     )
     def test_update_permissions(
-            self, client_fixture, expected_status, category_data, request
+        self, client_fixture, expected_status, category_data, request
     ):
         category = CategoryFactory()
         client = request.getfixturevalue(client_fixture)
@@ -82,7 +80,7 @@ class TestCategoryPermissions:
         ],
     )
     def test_patch_permissions(
-            self, client_fixture, expected_status, category_data, request
+        self, client_fixture, expected_status, category_data, request
     ):
         category = CategoryFactory()
         client = request.getfixturevalue(client_fixture)
@@ -100,7 +98,7 @@ class TestCategoryPermissions:
         ],
     )
     def test_create_permissions(
-            self, client_fixture, expected_status, category_data, request
+        self, client_fixture, expected_status, category_data, request
     ):
         client = request.getfixturevalue(client_fixture)
         response = client.post(ENDPOINT, category_data, format="json")
@@ -125,7 +123,10 @@ class TestCategoryAdminOperations:
     def test_create_category_duplicate_name(self, admin_client, category):
         """Test that duplicate category names are handled"""
         response = admin_client.post(ENDPOINT, {"name": category.name}, format="json")
-        assert response.status_code in [status.HTTP_400_BAD_REQUEST, status.HTTP_201_CREATED]
+        assert response.status_code in [
+            status.HTTP_400_BAD_REQUEST,
+            status.HTTP_201_CREATED,
+        ]
 
     def test_update_category(self, admin_client, category_data):
         category = CategoryFactory()

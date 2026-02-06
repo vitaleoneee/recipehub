@@ -46,7 +46,12 @@ def recipe(recipe_owner):
 
 @pytest.fixture
 def recipe_data(recipe_owner, category):
-    return {"category": category.id, "name": "test", "ingredients": "test - 1ks", "servings": 5}
+    return {
+        "category": category.id,
+        "name": "test",
+        "ingredients": "test - 1ks",
+        "servings": 5,
+    }
 
 
 @pytest.fixture()
@@ -67,5 +72,7 @@ def recipes():
     return {
         "approved_recipes": approved_recipes,
         "in_process_recipes": in_process_recipes,
-        "all_recipes_len": len(approved_recipes) + len(in_process_recipes) + len(rejected_recipes),
+        "all_recipes_len": len(approved_recipes)
+        + len(in_process_recipes)
+        + len(rejected_recipes),
     }
