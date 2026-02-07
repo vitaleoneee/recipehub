@@ -14,7 +14,6 @@ from recipehub.apps.recipes.api.serializers import (
     RecipeSerializer,
     CategorySerializer,
     RecipeModerationSerializer,
-    UserRecipeFavoriteSerializer,
 )
 from recipehub.apps.recipes.models import Recipe, Category
 from recipehub.apps.recipes.utils import get_best_recipes
@@ -158,10 +157,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        favorite_qs = UserRecipeFavorite.objects.filter(user=user, recipe=recipe)
-
         if request.method == "POST":
-            favorite, created = UserRecipeFavorite.objects.get_or_create(
+            _, created = UserRecipeFavorite.objects.get_or_create(
                 user=user, recipe=recipe
             )
 
@@ -171,16 +168,18 @@ class RecipeViewSet(viewsets.ModelViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            serializer = UserRecipeFavoriteSerializer(favorite)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(status=status.HTTP_201_CREATED)
 
-        if not favorite_qs.exists():
+        deleted, _ = UserRecipeFavorite.objects.filter(
+            user=user, recipe=recipe
+        ).delete()
+
+        if not deleted:
             return Response(
                 {"detail": "Recipe not in favorites"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        favorite_qs.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     # Recipe Builder block

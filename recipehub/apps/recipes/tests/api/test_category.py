@@ -1,6 +1,7 @@
 import pytest
 from rest_framework import status
 
+from recipehub.apps.recipes.api.serializers import CategorySerializer
 from recipehub.apps.recipes.models import Category
 from recipehub.factories import CategoryFactory
 
@@ -162,39 +163,47 @@ class TestCategoryAdminOperations:
 
 @pytest.mark.django_db
 class TestCategorySerializer:
-    def test_serializer_fields(self, admin_client, category_data):
-        """Checks that the serializer returns the correct fields"""
-        response = admin_client.post(ENDPOINT, category_data, format="json")
+    def test_serializer_fields(self, category, api_rf):
+        request = api_rf.get("/")
 
-        assert response.status_code == status.HTTP_201_CREATED
-        assert set(response.data.keys()) == {"url", "name", "slug"}
-        assert "url" in response.data
-        assert "name" in response.data
-        assert "slug" in response.data
-
-    def test_slug_is_read_only(self, admin_client):
-        """Checks that the slug cannot be passed when creating"""
-        response = admin_client.post(
-            ENDPOINT, {"name": "Test Category", "slug": "custom-slug"}, format="json"
+        serializer = CategorySerializer(
+            category,
+            context={"request": request},
         )
 
-        assert response.status_code == status.HTTP_201_CREATED
-        assert response.data["slug"] != "custom-slug"
-        assert response.data["slug"] == "test-category"
+        assert set(serializer.data.keys()) == {"url", "name", "slug"}
 
-    def test_slug_auto_generation(self, admin_client):
-        """Test that slug is auto-generated from name"""
-        response = admin_client.post(
-            ENDPOINT, {"name": "My Test Category"}, format="json"
+    def test_slug_is_read_only(self):
+        serializer = CategorySerializer(
+            data={"name": "Test Category", "slug": "custom-slug"}
         )
 
-        assert response.status_code == status.HTTP_201_CREATED
-        assert response.data["slug"] == "my-test-category"
+        assert serializer.is_valid()
+        assert "slug" not in serializer.validated_data
 
-    def test_url_field_present(self, api_client, category):
-        """Test that URL field is present in response"""
-        response = api_client.get(f"{ENDPOINT}{category.id}/")
+    def test_name_field_present_in_validated_data(self):
+        serializer = CategorySerializer(data={"name": "Test Category"})
 
-        assert response.status_code == status.HTTP_200_OK
-        assert "url" in response.data
-        assert f"/api/categories/{category.id}/" in response.data["url"]
+        assert serializer.is_valid()
+        assert serializer.validated_data["name"] == "Test Category"
+
+    def test_slug_in_representation(self, category, api_rf):
+        request = api_rf.get("/")
+
+        serializer = CategorySerializer(
+            category,
+            context={"request": request},
+        )
+
+        assert serializer.data["slug"] == category.slug
+
+    def test_url_field(self, category, api_rf):
+        request = api_rf.get("/")
+
+        serializer = CategorySerializer(
+            category,
+            context={"request": request},
+        )
+
+        assert "url" in serializer.data
+        assert str(category.id) in serializer.data["url"]

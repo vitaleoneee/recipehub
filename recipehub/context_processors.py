@@ -6,8 +6,9 @@ def redis_best_recipes(request):
     Returns top 4 rated recipes from Redis.
     Doesn't work for API
     """
-    if request.path.startswith("/api/") and not getattr(
-        request, "needs_context_processor", False
+    if (
+        request.path.startswith("/api/")
+        and request.path != "/api/recipes/best-recipes/"
     ):
         return {}
 

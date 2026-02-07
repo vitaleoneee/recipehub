@@ -1,6 +1,6 @@
 import pytest
 
-from rest_framework.test import APIClient
+from rest_framework.test import APIClient, APIRequestFactory
 
 from recipehub.factories import CategoryFactory, RecipeFactory
 
@@ -8,6 +8,11 @@ from recipehub.factories import CategoryFactory, RecipeFactory
 @pytest.fixture()
 def api_client():
     return APIClient()
+
+
+@pytest.fixture
+def api_rf():
+    return APIRequestFactory()
 
 
 @pytest.fixture()
@@ -51,6 +56,22 @@ def recipe_data(recipe_owner, category):
         "name": "test",
         "ingredients": "test - 1ks",
         "servings": 5,
+    }
+
+
+@pytest.fixture
+def recipe_serializer_data(recipe_owner, category):
+    return {
+        "user": recipe_owner.id,
+        "category": category.id,
+        "name": "test",
+        "slug": "123",
+        "ingredients": "test - 1ks",
+        "servings": 5,
+        "announcement_text": "test",
+        "recipe_text": "test",
+        "moderation_status": "approved",
+        "created_at": "2026-01-02",
     }
 
 

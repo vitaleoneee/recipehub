@@ -2,7 +2,6 @@ from rest_framework import serializers
 
 from recipehub.apps.recipes.models import Recipe, Category
 from recipehub.apps.recipes.utils import validate_ingredients_format
-from recipehub.apps.users.models import UserRecipeFavorite
 
 
 class CategorySerializer(serializers.HyperlinkedModelSerializer):
@@ -46,10 +45,3 @@ class RecipeSerializer(serializers.ModelSerializer):
 
 class RecipeModerationSerializer(serializers.Serializer):
     status = serializers.ChoiceField(choices=("approved", "rejected"))
-
-
-class UserRecipeFavoriteSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = UserRecipeFavorite
-        fields = ["id", "user", "recipe", "added_at"]
-        read_only_fields = ["id", "user", "added_at"]

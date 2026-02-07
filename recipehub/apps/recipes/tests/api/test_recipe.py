@@ -1,6 +1,10 @@
 import pytest
 from rest_framework import status
 
+from recipehub.apps.recipes.api.serializers import (
+    RecipeModerationSerializer,
+    RecipeSerializer,
+)
 from recipehub.apps.recipes.models import Recipe
 from recipehub.apps.users.models import UserRecipeFavorite
 from recipehub.factories import RecipeFactory, CategoryFactory
@@ -411,8 +415,6 @@ class TestRecipeCustomActions:
         response = authenticated_client.post(f"{ENDPOINT}{recipe.slug}/favorite/")
 
         assert response.status_code == status.HTTP_201_CREATED
-        assert "user" in response.data
-        assert "recipe" in response.data
         assert UserRecipeFavorite.objects.filter(
             user=authenticated_client.handler._force_user, recipe=recipe
         ).exists()
@@ -517,3 +519,76 @@ class TestRecipeCustomActions:
         assert response.status_code == status.HTTP_200_OK
         assert len(response.data["recipes"]) == 1
         assert response.data["recipes"][0]["moderation_status"] == "approved"
+
+
+@pytest.mark.django_db
+class TestRecipeModerationSerializer:
+    def test_serializer_valid_status_field(self, admin_client):
+        serializer = RecipeModerationSerializer(data={"status": "approved"})
+        assert serializer.is_valid()
+        assert serializer.validated_data["status"] == "approved"
+
+    def test_serializer_invalid_status_field(self, admin_client):
+        serializer = RecipeModerationSerializer(data={"status": "wrong"})
+        assert not serializer.is_valid()
+        assert "status" in serializer.errors
+
+
+@pytest.mark.django_db
+class TestRecipeSerializer:
+    @pytest.mark.parametrize(
+        "field,value",
+        [
+            ("user", 1),
+            ("created_at", "2026-01-01"),
+            ("slug", "test-slug"),
+            ("moderation_status", "approved"),
+        ],
+    )
+    def test_read_only_fields(self, field, value, recipe_serializer_data):
+        recipe_serializer_data[field] = value
+
+        serializer = RecipeSerializer(data=recipe_serializer_data)
+
+        assert serializer.is_valid(), serializer.errors
+        assert field not in serializer.validated_data
+
+    def test_create_sets_user(
+        self, recipe_serializer_data, authenticated_client, api_rf
+    ):
+        request = api_rf.post("/recipes/")
+        request.user = authenticated_client.handler._force_user
+
+        serializer = RecipeSerializer(
+            data=recipe_serializer_data, context={"request": request}
+        )
+
+        assert serializer.is_valid(), serializer.errors
+
+        recipe = serializer.save()
+
+        assert recipe.user == authenticated_client.handler._force_user
+
+    def test_user_is_string_related(self, recipe):
+        serializer = RecipeSerializer(recipe)
+
+        assert serializer.data["user"] == str(recipe.user)
+
+    def test_ingredients_normalized(self, recipe_serializer_data):
+        recipe_serializer_data["ingredients"] = "Tomato - 2 pcs\nSalt - 1 tsp"
+
+        serializer = RecipeSerializer(data=recipe_serializer_data)
+
+        assert serializer.is_valid(), serializer.errors
+
+        assert serializer.validated_data["ingredients"] == (
+            "tomato - 2 pcs\nsalt - 1 tsp"
+        )
+
+    def test_ingredients_invalid_format(self, recipe_serializer_data):
+        recipe_serializer_data["ingredients"] = "Tomato 2 pcs"
+
+        serializer = RecipeSerializer(data=recipe_serializer_data)
+
+        assert not serializer.is_valid()
+        assert "ingredients" in serializer.errors
