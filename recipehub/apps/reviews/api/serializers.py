@@ -30,12 +30,13 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 class CommentSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField(read_only=True)
+    active = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = Comment
         fields = ["user", "recipe", "body", "created_at", "active"]
 
-    read_only_fields = ["created_at", "active"]
+    read_only_fields = ["created_at"]
 
     def create(self, validated_data):
         validated_data["user"] = self.context["request"].user

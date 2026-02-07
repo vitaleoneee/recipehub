@@ -48,6 +48,16 @@ class CommentViewSet(viewsets.ModelViewSet):
         return CommentSerializer
 
     def get_permissions(self):
+        # For custom actions use permissions from the decorator
+        if self.action not in [
+            "list",
+            "retrieve",
+            "create",
+            "update",
+            "partial_update",
+            "destroy",
+        ]:
+            return super().get_permissions()
         if self.action == "create":
             return [permissions.IsAuthenticated()]
         elif self.action in ["update", "partial_update", "destroy"]:
