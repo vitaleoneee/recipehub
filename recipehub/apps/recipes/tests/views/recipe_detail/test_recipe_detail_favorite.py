@@ -7,7 +7,7 @@ from recipehub.factories import RecipeFactory, UserRecipeFavoriteFactory
 @pytest.mark.django_db
 def test_recipe_detail_favorite(client, users_list):
     # Testing favorite recipes display and owner restrictions
-    recipe_owner_user, first_simple_user, second_simple_user = users_list.values()
+    recipe_owner_user, first_simple_user, second_simple_user, _ = users_list.values()
 
     recipe_from_owner_user = RecipeFactory.create(
         user=recipe_owner_user, slug="fish", moderation_status="approved"

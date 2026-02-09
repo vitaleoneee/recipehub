@@ -9,7 +9,7 @@ from recipehub.factories import RecipeFactory
 @pytest.mark.django_db
 def test_review_creates_redis_rating(client, users_list, fake_redis):
     with patch("recipehub.apps.reviews.views.r", fake_redis):
-        _, first_user, _ = users_list.values()
+        first_user = users_list["first_simple_user"]
         recipe = RecipeFactory.create(user=first_user, slug="fish")
         client.force_login(first_user)
 

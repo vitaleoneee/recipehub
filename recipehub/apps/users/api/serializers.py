@@ -1,3 +1,5 @@
+from typing import Any
+
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
@@ -33,7 +35,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ["id", "date_joined"]
 
-    def create(self, validated_data):
+    def create(self, validated_data: dict[str, Any]) -> User:
         password = validated_data.pop("password")
         user = User(**validated_data)
         user.set_password(password)

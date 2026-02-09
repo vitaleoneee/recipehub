@@ -1,5 +1,8 @@
 from django import forms
 from allauth.account.forms import SignupForm
+from django.http import HttpRequest
+
+from recipehub.apps.users.models import User
 
 
 class CustomSignupForm(SignupForm):
@@ -21,7 +24,7 @@ class CustomSignupForm(SignupForm):
         "date_of_birth",
     ]
 
-    def save(self, request):
+    def save(self, request: HttpRequest) -> User:
         user = super().save(request)
         user.date_of_birth = self.cleaned_data.get("date_of_birth")
         user.photo = self.cleaned_data.get("photo")

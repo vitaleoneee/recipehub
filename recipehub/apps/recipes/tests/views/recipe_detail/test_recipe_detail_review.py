@@ -7,7 +7,7 @@ from recipehub.factories import RecipeFactory, ReviewFactory
 @pytest.mark.django_db
 def test_recipe_detail_review_owner_cannot_rate(client, users_list):
     # Testing that recipe owners cannot rate their own recipes
-    recipe_owner_user, first_simple_user, second_simple_user = users_list.values()
+    recipe_owner_user, first_simple_user, second_simple_user, _ = users_list.values()
     approved_recipe = RecipeFactory.create(
         user=recipe_owner_user, slug="fish", moderation_status="approved"
     )
@@ -31,7 +31,7 @@ def test_recipe_detail_review_owner_cannot_rate(client, users_list):
 @pytest.mark.django_db
 def test_recipe_detail_review_other_user_can_rate(client, users_list):
     # Testing that other users can rate recipes
-    recipe_owner_user, first_simple_user, second_simple_user = users_list.values()
+    recipe_owner_user, first_simple_user, second_simple_user, _ = users_list.values()
     recipe_from_another_user = RecipeFactory.create(
         user=first_simple_user, slug="pizza", moderation_status="approved"
     )

@@ -1,3 +1,5 @@
+from typing import Any
+
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
@@ -12,14 +14,13 @@ class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
         fields = ["user", "recipe", "rating", "created_at"]
+        read_only_fields = ["created_at"]
 
-    read_only_fields = ["created_at"]
-
-    def create(self, validated_data):
+    def create(self, validated_data: dict[str, Any]) -> Review:
         validated_data["user"] = self.context["request"].user
         return Review.objects.create(**validated_data)
 
-    def validate(self, attrs):
+    def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
         recipe = attrs["recipe"]
         user = self.context["request"].user
 
@@ -35,10 +36,9 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = ["user", "recipe", "body", "created_at", "active"]
+        read_only_fields = ["created_at"]
 
-    read_only_fields = ["created_at"]
-
-    def create(self, validated_data):
+    def create(self, validated_data: dict[str, Any]) -> Comment:
         validated_data["user"] = self.context["request"].user
         return Comment.objects.create(**validated_data)
 
@@ -51,10 +51,9 @@ class CommentAdminSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = ["user", "recipe", "body", "active", "created_at"]
+        read_only_fields = ["created_at"]
 
-    read_only_fields = ["created_at"]
-
-    def create(self, validated_data):
+    def create(self, validated_data: dict[str, Any]) -> Comment:
         request_user = self.context["request"].user
 
         if not validated_data.get("user"):

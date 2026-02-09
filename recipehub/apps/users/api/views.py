@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.request import Request
 from rest_framework.response import Response
 
 from recipehub.apps.recipes.api.serializers import RecipeSerializer
@@ -22,7 +23,7 @@ class UserViewSet(viewsets.ModelViewSet):
         url_path="me",
         permission_classes=[IsAuthenticated],
     )
-    def me(self, request):
+    def me(self, request: Request) -> Response:
         if request.method == "GET":
             serializer = UserSerializer(instance=request.user)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -43,7 +44,7 @@ class UserViewSet(viewsets.ModelViewSet):
         url_path="recipes",
         permission_classes=[IsAuthenticated],
     )
-    def recipes(self, request, pk=None):
+    def recipes(self, request: Request, *args, **kwargs) -> Response:
         user = self.get_object()
 
         queryset = Recipe.objects.filter(user=user).select_related("category", "user")

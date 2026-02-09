@@ -7,7 +7,7 @@ from recipehub.factories import RecipeFactory, CommentFactory
 @pytest.mark.django_db
 def test_recipe_detail_comment(client, users_list):
     # Testing comment display and pagination
-    comment_owner_user, first_simple_user, second_simple_user = users_list.values()
+    comment_owner_user, first_simple_user, second_simple_user, _ = users_list.values()
     recipe_from_comment_owner_user = RecipeFactory.create(
         user=comment_owner_user, slug="fish", moderation_status="approved"
     )

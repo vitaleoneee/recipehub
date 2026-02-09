@@ -4,7 +4,7 @@ from django.core.mail import EmailMultiAlternatives
 
 
 @shared_task
-def send_welcome_mail(username, email):
+def send_welcome_mail(username: str, email: str) -> None:
     if not email:
         return
 

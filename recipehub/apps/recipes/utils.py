@@ -81,7 +81,7 @@ def validate_ingredients_format(value: str) -> str:
     return "\n".join(normalized_lines)
 
 
-def get_best_recipes():
+def get_best_recipes() -> list[Any]:
     """
     Returns top 4 rated recipes from Redis.
     """

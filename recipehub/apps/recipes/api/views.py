@@ -1,4 +1,5 @@
-from django.db.models import Q
+from django.db.models import Q, QuerySet
+from rest_framework.request import Request
 
 import recipehub.api_permissions as custom_permissions
 from django.db import transaction
@@ -6,7 +7,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter, OrderingFilter
-from rest_framework.permissions import IsAdminUser, IsAuthenticated
+from rest_framework.permissions import IsAdminUser, IsAuthenticated, BasePermission
 from rest_framework.response import Response
 from recipehub.apps.recipes.api.pagination import CategoryPagination
 
@@ -25,7 +26,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
     serializer_class = CategorySerializer
     pagination_class = CategoryPagination
 
-    def get_permissions(self):
+    def get_permissions(self) -> list[BasePermission]:
         if self.action in ["list", "retrieve"]:
             return [permissions.AllowAny()]
         return [permissions.IsAuthenticated(), permissions.IsAdminUser()]
@@ -43,13 +44,13 @@ class RecipeViewSet(viewsets.ModelViewSet):
     search_fields = ["name", "ingredients", "recipe_text"]
     ordering_fields = ["name", "cooking_time", "created_at"]
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet[Recipe]:
         user = self.request.user
         if user.is_staff:
             return Recipe.objects.all()
         return Recipe.objects.filter(moderation_status="approved")
 
-    def get_permissions(self):
+    def get_permissions(self) -> list[BasePermission]:
         # For custom actions use permissions from the decorator
         if self.action not in [
             "list",
@@ -79,8 +80,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
         url_path="my-recipes",
         permission_classes=[IsAuthenticated],
     )
-    def my_recipes(self, request):
-        recipes = self.get_queryset().filter(user=self.request.user)
+    def my_recipes(self, request: Request) -> Response:
+        recipes = self.get_queryset().filter(user=request.user)
         serializer = RecipeSerializer(recipes, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -91,7 +92,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         name="Best recipes",
         permission_classes=[IsAuthenticated],
     )
-    def get_best_recipes(self, request):
+    def get_best_recipes(self, request: Request) -> Response:
         best_recipes = get_best_recipes()
         serializer = RecipeSerializer(
             best_recipes,
@@ -107,7 +108,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         name="Recipes are being moderated",
         permission_classes=[IsAuthenticated, IsAdminUser],
     )
-    def get_in_process_recipes(self, request):
+    def get_in_process_recipes(self, request: Request) -> Response:
         recipes = Recipe.objects.filter(moderation_status="in_process")
         serializer = RecipeSerializer(recipes, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -119,7 +120,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         name="Moderate recipe",
         permission_classes=[IsAuthenticated, IsAdminUser],
     )
-    def moderate(self, request, slug=None):
+    def moderate(self, request: Request, *args, **kwargs) -> Response:
         recipe = self.get_object()
 
         serializer = RecipeModerationSerializer(data=request.data)
@@ -147,7 +148,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         url_path="favorite",
         permission_classes=[IsAuthenticated],
     )
-    def favorite(self, request, slug=None):
+    def favorite(self, request: Request, *args, **kwargs) -> Response:
         recipe = self.get_object()
         user = request.user
 
@@ -190,7 +191,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         name="Recipe builder",
         permission_classes=[IsAuthenticated],
     )
-    def recipe_builder(self, request):
+    def recipe_builder(self, request: Request) -> Response:
         ingredients = request.query_params.get("ingredients", "").split(",")
         q = Q()
         for ing in ingredients:
