@@ -1,7 +1,6 @@
-from urllib.request import Request
+from rest_framework.request import Request
 
 from django.db import transaction
-from django.db.models import QuerySet
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, BasePermission
@@ -22,23 +21,54 @@ class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    def get_queryset(self) -> QuerySet[Review]:
-        user = self.request.user
-        if user.is_staff:
-            return Review.objects.all()
-        return Review.objects.filter(user=user)
-
     def get_permissions(self) -> list[BasePermission]:
         if self.action == "create":
             return [permissions.IsAuthenticated()]
-        elif self.action in ["update", "partial_update", "destroy"]:
+        elif self.action in ["update_by_recipe", "update", "partial_update", "destroy"]:
             return [
                 permissions.IsAuthenticated(),
                 custom_permissions.IsAdminOrOwner(),
             ]
         elif self.action == "list":
-            return [permissions.IsAdminUser()]
+            # Allow authenticated users to list their own reviews; staff will see all
+            return [permissions.IsAuthenticated()]
         return [permissions.IsAuthenticated()]
+
+    def list(self, request, *args, **kwargs):
+        # For staff return all reviews, otherwise return only user's reviews
+        if request.user.is_staff:
+            queryset = self.filter_queryset(self.get_queryset())
+        else:
+            queryset = Review.objects.filter(user=request.user)
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+    @action(
+        detail=False, methods=["put", "patch"], url_path="recipes/(?P<recipe_id>\d+)"
+    )
+    def update_by_recipe(
+        self, request: Request, recipe_id: int | None = None
+    ) -> Response:
+        try:
+            review = Review.objects.get(recipe_id=recipe_id)
+        except Review.DoesNotExist:
+            return Response(
+                {"detail": "Review not found for this recipe"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        self.check_object_permissions(request, review)
+
+        serializer = self.get_serializer(review, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class CommentViewSet(viewsets.ModelViewSet):

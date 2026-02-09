@@ -14,18 +14,19 @@ class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
         fields = ["user", "recipe", "rating", "created_at"]
-        read_only_fields = ["created_at"]
+        read_only_fields = ["user", "created_at"]
 
     def create(self, validated_data: dict[str, Any]) -> Review:
         validated_data["user"] = self.context["request"].user
         return Review.objects.create(**validated_data)
 
     def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
-        recipe = attrs["recipe"]
-        user = self.context["request"].user
+        if self.instance is None:
+            recipe = attrs.get("recipe")
+            user = self.context["request"].user
 
-        if recipe.user == user:
-            raise serializers.ValidationError("You can't review yourself")
+            if recipe and recipe.user == user:
+                raise serializers.ValidationError("You can't review yourself")
         return attrs
 
 
