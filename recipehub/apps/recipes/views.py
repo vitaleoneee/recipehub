@@ -134,7 +134,7 @@ def save_recipe(request):
     if not slug:
         return JsonResponse({"error": "Missing fields"}, status=400)
 
-    recipe = get_object_or_404(Recipe, slug=slug)
+    recipe = get_object_or_404(Recipe, slug=slug, moderation_status="approved")
 
     favorite, created = UserRecipeFavorite.objects.get_or_create(
         user=request.user, recipe=recipe

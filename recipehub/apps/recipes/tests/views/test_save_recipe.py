@@ -39,7 +39,7 @@ class TestSaveRecipeAPI:
 
     def test_save_recipe_success(self, client, users_list):
         user = users_list["first_simple_user"]
-        recipe = RecipeFactory.create(slug="fish")
+        recipe = RecipeFactory.create(slug="fish", moderation_status="approved")
         client.force_login(user)
 
         # Sending data in a POST request - adding to favorites
@@ -55,7 +55,7 @@ class TestSaveRecipeAPI:
 
     def test_unsave_recipe_success(self, client, users_list):
         user = users_list["first_simple_user"]
-        recipe = RecipeFactory.create(slug="fish")
+        recipe = RecipeFactory.create(slug="fish", moderation_status="approved")
         UserRecipeFavoriteFactory.create(user=user, recipe=recipe)
         client.force_login(user)
 
@@ -72,7 +72,7 @@ class TestSaveRecipeAPI:
 
     def test_save_recipe_toggle(self, client, users_list):
         user = users_list["first_simple_user"]
-        recipe = RecipeFactory.create(slug="fish")
+        recipe = RecipeFactory.create(slug="fish", moderation_status="approved")
         client.force_login(user)
 
         # Sending data in a POST request - adding to favorites

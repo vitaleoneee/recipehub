@@ -48,7 +48,9 @@ class UserViewSet(viewsets.ModelViewSet):
         user = self.get_object()
 
         queryset = (
-            Recipe.objects.filter(user=user).select_related("category", "user").order_by("pk")
+            Recipe.objects.filter(user=user)
+            .select_related("category", "user")
+            .order_by("pk", "moderation_status")
         )
 
         page = self.paginate_queryset(queryset)
