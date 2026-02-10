@@ -58,10 +58,10 @@ def fake_redis(monkeypatch) -> fakeredis.FakeStrictRedis:
 def users_list() -> Dict[str, object]:
     """Creates a dictionary of test users for various test scenarios."""
     return {
-        "recipe_owner_user": UserFactory.create(),
-        "first_simple_user": UserFactory.create(),
-        "second_simple_user": UserFactory.create(),
-        "admin_user": UserFactory.create(),
+        "recipe_owner_user": UserFactory(),
+        "first_simple_user": UserFactory(),
+        "second_simple_user": UserFactory(),
+        "admin_user": UserFactory(),
     }
 
 

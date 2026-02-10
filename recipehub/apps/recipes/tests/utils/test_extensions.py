@@ -10,11 +10,13 @@ from recipehub.apps.recipes.utils import valid_extension
         ("paint.png", "PNG"),
     ],
 )
-def test_valid_extensions(filename, res):
-    assert valid_extension(filename) == res
+class TestValidExtensions:
+    def test_valid_extensions(self, filename, res):
+        assert valid_extension(filename) == res
 
 
 @pytest.mark.parametrize("filename", ["cat.gif", "text", "mafin.txt"])
-def test_invalid_extensions(filename):
-    with pytest.raises(ValueError):
-        valid_extension(filename)
+class TestInvalidExtensions:
+    def test_invalid_extensions(self, filename):
+        with pytest.raises(ValueError):
+            valid_extension(filename)

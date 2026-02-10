@@ -38,7 +38,7 @@ class TestUserPermissions:
         ],
     )
     def test_retrieve_user_permissions(
-            self, client_fixture, expected_status, request, users_list
+        self, client_fixture, expected_status, request, users_list
     ):
         """Only admins can retrieve specific user details"""
         client = request.getfixturevalue(client_fixture)
@@ -55,7 +55,7 @@ class TestUserPermissions:
         ],
     )
     def test_update_permissions(
-            self, client_fixture, expected_status, request, users_list, sample_image
+        self, client_fixture, expected_status, request, users_list, sample_image
     ):
         """Only admins can update users"""
         client = request.getfixturevalue(client_fixture)
@@ -77,7 +77,7 @@ class TestUserPermissions:
         ],
     )
     def test_delete_permissions(
-            self, client_fixture, expected_status, request, users_list
+        self, client_fixture, expected_status, request, users_list
     ):
         """Only admins can delete users"""
         client = request.getfixturevalue(client_fixture)
@@ -221,7 +221,7 @@ class TestUserRecipesEndpoint:
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
     def test_recipes_authenticated_can_access(
-            self, authenticated_client, users_list, recipe
+        self, authenticated_client, users_list, recipe
     ):
         """Authenticated user can get specific user's recipes"""
         user = users_list["recipe_owner_user"]

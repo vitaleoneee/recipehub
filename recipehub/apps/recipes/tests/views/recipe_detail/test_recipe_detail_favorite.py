@@ -5,45 +5,56 @@ from recipehub.factories import RecipeFactory, UserRecipeFavoriteFactory
 
 
 @pytest.mark.django_db
-def test_recipe_detail_favorite(client, users_list):
-    # Testing favorite recipes display and owner restrictions
-    recipe_owner_user, first_simple_user, second_simple_user, _ = users_list.values()
+class TestRecipeDetailFavorite:
+    """Tests for favorite display on recipe detail page"""
 
-    recipe_from_owner_user = RecipeFactory.create(
-        user=recipe_owner_user, slug="fish", moderation_status="approved"
-    )
-    recipe_from_another_user = RecipeFactory.create(
-        user=first_simple_user, slug="pizza", moderation_status="approved"
-    )
-    recipe_from_second_user = RecipeFactory.create(
-        user=second_simple_user, slug="borsh", moderation_status="approved"
-    )
+    def test_recipe_detail_favorite(self, client, users_list):
+        # Testing favorite recipes display and owner restrictions
+        recipe_owner_user = users_list["recipe_owner_user"]
+        first_simple_user = users_list["first_simple_user"]
+        second_simple_user = users_list["second_simple_user"]
 
-    UserRecipeFavoriteFactory.create(
-        user=recipe_owner_user, recipe=recipe_from_another_user
-    )
+        recipe_from_owner_user = RecipeFactory.create(
+            user=recipe_owner_user, slug="fish", moderation_status="approved"
+        )
+        recipe_from_another_user = RecipeFactory.create(
+            user=first_simple_user, slug="pizza", moderation_status="approved"
+        )
+        recipe_from_second_user = RecipeFactory.create(
+            user=second_simple_user, slug="borsh", moderation_status="approved"
+        )
 
-    client.force_login(recipe_owner_user)
+        UserRecipeFavoriteFactory.create(
+            user=recipe_owner_user, recipe=recipe_from_another_user
+        )
 
-    # Testing recipe already in favorites
-    response = client.get(
-        reverse("recipes:recipe-detail", kwargs={"slug": recipe_from_another_user.slug})
-    )
-    assert response.status_code == 200
-    assertContains(response, "In Favorites")
-    assert response.context["is_favorited"] is True
+        client.force_login(recipe_owner_user)
 
-    # Testing recipe not in favorites
-    response = client.get(
-        reverse("recipes:recipe-detail", kwargs={"slug": recipe_from_second_user.slug})
-    )
-    assert response.status_code == 200
-    assertContains(response, "Add to Favorites")
+        # Testing recipe already in favorites
+        response = client.get(
+            reverse(
+                "recipes:recipe-detail", kwargs={"slug": recipe_from_another_user.slug}
+            )
+        )
+        assert response.status_code == 200
+        assertContains(response, "In Favorites")
+        assert response.context["is_favorited"] is True
 
-    # Testing owner cannot favorite their own recipe
-    response = client.get(
-        reverse("recipes:recipe-detail", kwargs={"slug": recipe_from_owner_user.slug})
-    )
-    assert response.status_code == 200
-    assertNotContains(response, "Add to Favorites")
-    assertNotContains(response, "In Favorites")
+        # Testing recipe not in favorites
+        response = client.get(
+            reverse(
+                "recipes:recipe-detail", kwargs={"slug": recipe_from_second_user.slug}
+            )
+        )
+        assert response.status_code == 200
+        assertContains(response, "Add to Favorites")
+
+        # Testing owner cannot favorite their own recipe
+        response = client.get(
+            reverse(
+                "recipes:recipe-detail", kwargs={"slug": recipe_from_owner_user.slug}
+            )
+        )
+        assert response.status_code == 200
+        assertNotContains(response, "Add to Favorites")
+        assertNotContains(response, "In Favorites")

@@ -11,9 +11,14 @@ from recipehub.factories import RecipeFactory, UserFactory, UserRecipeFavoriteFa
     ],
 )
 @pytest.mark.django_db
-def test_user_favorite_model_str_method(name, username, expected):
-    user = UserFactory.create(username=username)
-    recipe = RecipeFactory.create(name=name, user=user)
-    user_recipe_favorite = UserRecipeFavoriteFactory.create(user=user, recipe=recipe)
+class TestUserRecipeFavoriteModel:
+    """Tests for UserRecipeFavorite model string representation"""
 
-    assert str(user_recipe_favorite) == expected
+    def test_user_favorite_model_str_method(self, name, username, expected):
+        user = UserFactory.create(username=username)
+        recipe = RecipeFactory.create(name=name, user=user)
+        user_recipe_favorite = UserRecipeFavoriteFactory.create(
+            user=user, recipe=recipe
+        )
+
+        assert str(user_recipe_favorite) == expected

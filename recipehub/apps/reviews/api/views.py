@@ -17,7 +17,7 @@ from recipehub.apps.reviews.models import Review, Comment
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
-    queryset = Review.objects.all()
+    queryset = Review.objects.all().order_by("pk")
     serializer_class = ReviewSerializer
     permission_classes = [permissions.IsAuthenticated]
 
@@ -37,9 +37,9 @@ class ReviewViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         # For staff return all reviews, otherwise return only user's reviews
         if request.user.is_staff:
-            queryset = self.filter_queryset(self.get_queryset())
+            queryset = self.filter_queryset(self.get_queryset()).order_by("pk")
         else:
-            queryset = Review.objects.filter(user=request.user)
+            queryset = Review.objects.filter(user=request.user).order_by("pk")
 
         page = self.paginate_queryset(queryset)
         if page is not None:
@@ -72,7 +72,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
 
 class CommentViewSet(viewsets.ModelViewSet):
-    queryset = Comment.objects.all()
+    queryset = Comment.objects.all().order_by("pk")
     serializer_class = CommentSerializer
 
     def get_serializer_class(self) -> type[CommentSerializer | CommentAdminSerializer]:
@@ -109,7 +109,7 @@ class CommentViewSet(viewsets.ModelViewSet):
         permission_classes=[IsAuthenticated],
     )
     def my_comments(self, request: Request) -> Response:
-        comments = Comment.objects.filter(user=self.request.user)
+        comments = Comment.objects.filter(user=self.request.user).order_by("pk")
         serializer = CommentSerializer(comments, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 

@@ -13,7 +13,7 @@ User = get_user_model()
 
 
 class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
+    queryset = User.objects.all().order_by("pk")
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAdminUser]
 
@@ -47,7 +47,9 @@ class UserViewSet(viewsets.ModelViewSet):
     def recipes(self, request: Request, *args, **kwargs) -> Response:
         user = self.get_object()
 
-        queryset = Recipe.objects.filter(user=user).select_related("category", "user")
+        queryset = (
+            Recipe.objects.filter(user=user).select_related("category", "user").order_by("pk")
+        )
 
         page = self.paginate_queryset(queryset)
         if page is not None:

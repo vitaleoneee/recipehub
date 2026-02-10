@@ -12,9 +12,10 @@ from recipehub.apps.recipes.utils import user_photo_upload_to, recipe_photo_uplo
         ("frer234gfqw3rf.jpeg", "user-photo/test.jpeg"),
     ],
 )
-def test_success_user_photo_upload_to(filename, expected_path):
-    user = UserFactory.build(username="test")
-    assert user_photo_upload_to(user, filename) == expected_path
+class TestUserPhotoUploadTo:
+    def test_success_user_photo_upload_to(self, filename, expected_path):
+        user = UserFactory.build(username="test")
+        assert user_photo_upload_to(user, filename) == expected_path
 
 
 @pytest.mark.parametrize(
@@ -31,11 +32,12 @@ def test_success_user_photo_upload_to(filename, expected_path):
         ),
     ],
 )
-def test_success_recipe_photo_upload_to(filename, expected_path, mocker):
-    recipe = RecipeFactory.build(user__username="test", slug="fish")
-    mocker.patch(
-        "recipehub.apps.recipes.utils.uuid.uuid4",
-        return_value="a596b366-befa-42d1-870a-b4e7fddd9eba",
-    )
+class TestRecipePhotoUploadTo:
+    def test_success_recipe_photo_upload_to(self, filename, expected_path, mocker):
+        recipe = RecipeFactory.build(user__username="test", slug="fish")
+        mocker.patch(
+            "recipehub.apps.recipes.utils.uuid.uuid4",
+            return_value="a596b366-befa-42d1-870a-b4e7fddd9eba",
+        )
 
-    assert recipe_photo_upload_to(recipe, filename) == expected_path
+        assert recipe_photo_upload_to(recipe, filename) == expected_path

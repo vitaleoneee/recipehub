@@ -22,7 +22,7 @@ from recipehub.apps.users.models import UserRecipeFavorite
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
-    queryset = Category.objects.all()
+    queryset = Category.objects.all().order_by("pk")
     serializer_class = CategorySerializer
     pagination_class = CategoryPagination
 
@@ -33,7 +33,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
-    queryset = Recipe.objects.all()
+    queryset = Recipe.objects.all().order_by("pk")
     serializer_class = RecipeSerializer
     lookup_field = "slug"
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
@@ -81,7 +81,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         permission_classes=[IsAuthenticated],
     )
     def my_recipes(self, request: Request) -> Response:
-        recipes = self.get_queryset().filter(user=request.user)
+        recipes = self.get_queryset().filter(user=request.user).order_by("pk")
         serializer = RecipeSerializer(recipes, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -109,7 +109,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         permission_classes=[IsAuthenticated, IsAdminUser],
     )
     def get_in_process_recipes(self, request: Request) -> Response:
-        recipes = Recipe.objects.filter(moderation_status="in_process")
+        recipes = Recipe.objects.filter(moderation_status="in_process").order_by("pk")
         serializer = RecipeSerializer(recipes, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -200,6 +200,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             Recipe.objects.select_related("user", "category")
             .filter(moderation_status="approved")
             .filter(q)
+            .order_by("pk")
         )
         serializer = RecipeSerializer(queryset, many=True)
         return Response({"recipes": serializer.data}, status=status.HTTP_200_OK)

@@ -11,6 +11,9 @@ from recipehub.apps.recipes.utils import reformate_ingredients
         ("\nmilk,chocolate,ice-cream\n", ["milk", "chocolate", "ice-cream"]),
     ],
 )
-def test_reformat_ingredients_returns_list(raw_ingredients, expected):
-    assert reformate_ingredients(raw_ingredients) == expected
-    assert isinstance(reformate_ingredients(raw_ingredients), list)
+class TestReformatIngredients:
+    """Tests for reformate_ingredients utility"""
+
+    def test_reformat_ingredients_returns_list(self, raw_ingredients, expected):
+        assert reformate_ingredients(raw_ingredients) == expected
+        assert isinstance(reformate_ingredients(raw_ingredients), list)

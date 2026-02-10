@@ -11,8 +11,11 @@ from recipehub.factories import UserFactory, ReviewFactory
     ],
 )
 @pytest.mark.django_db
-def test_review_model_str_method(username, rating, expected):
-    user = UserFactory.create(username=username)
-    review = ReviewFactory.create(user=user, rating=rating)
+class TestReviewModel:
+    """Model tests for Review"""
 
-    assert str(review) == expected
+    def test_review_model_str_method(self, username, rating, expected):
+        user = UserFactory.create(username=username)
+        review = ReviewFactory.create(user=user, rating=rating)
+
+        assert str(review) == expected

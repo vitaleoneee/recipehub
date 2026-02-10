@@ -8,22 +8,30 @@ from recipehub.factories import RecipeFactory
     "name,expected", [("fish", "fish"), ("the best fish", "the-best-fish")]
 )
 @pytest.mark.django_db
-def test_generate_unique_slug(name, expected):
-    recipe = RecipeFactory.create(name=name)
-    assert generate_unique_slug(instance=recipe, slugify_value=recipe.name) == expected
+class TestGenerateUniqueSlug:
+    def test_generate_unique_slug(self, name, expected):
+        recipe = RecipeFactory.create(name=name)
+        assert (
+            generate_unique_slug(instance=recipe, slugify_value=recipe.name) == expected
+        )
 
 
 @pytest.mark.django_db
-def test_generate_unique_slug_with_collision():
-    recipe1 = RecipeFactory.create(name="fish", slug=None)
-    assert generate_unique_slug(instance=recipe1, slugify_value=recipe1.name) == "fish"
+class TestGenerateUniqueSlugCollisions:
+    def test_generate_unique_slug_with_collision(self):
+        recipe1 = RecipeFactory.create(name="fish", slug=None)
+        assert (
+            generate_unique_slug(instance=recipe1, slugify_value=recipe1.name) == "fish"
+        )
 
-    recipe2 = RecipeFactory.create(name="fish", slug=None)
-    assert (
-        generate_unique_slug(instance=recipe2, slugify_value=recipe2.name) == "fish-1"
-    )
+        recipe2 = RecipeFactory.create(name="fish", slug=None)
+        assert (
+            generate_unique_slug(instance=recipe2, slugify_value=recipe2.name)
+            == "fish-1"
+        )
 
-    recipe3 = RecipeFactory.create(name="fish", slug=None)
-    assert (
-        generate_unique_slug(instance=recipe3, slugify_value=recipe3.name) == "fish-2"
-    )
+        recipe3 = RecipeFactory.create(name="fish", slug=None)
+        assert (
+            generate_unique_slug(instance=recipe3, slugify_value=recipe3.name)
+            == "fish-2"
+        )
