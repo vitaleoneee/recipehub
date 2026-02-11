@@ -50,7 +50,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     @action(
-        detail=False, methods=["put", "patch"], url_path="recipes/(?P<recipe_id>\d+)"
+        detail=False, methods=["put", "patch"], url_path=r"recipes/(?P<recipe_id>\d+)"
     )
     def update_by_recipe(
         self, request: Request, recipe_id: int | None = None

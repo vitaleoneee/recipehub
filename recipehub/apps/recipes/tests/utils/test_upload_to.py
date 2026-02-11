@@ -23,12 +23,12 @@ class TestUserPhotoUploadTo:
     [
         (
             "hello-world.JPG",
-            "recipes/test/fish/a596b366-befa-42d1-870a-b4e7fddd9eba.jpg",
+            "recipes/test/a596b366-befa-42d1-870a-b4e7fddd9eba.jpg",
         ),
-        ("1hellO1.png", "recipes/test/fish/a596b366-befa-42d1-870a-b4e7fddd9eba.png"),
+        ("1hellO1.png", "recipes/test/a596b366-befa-42d1-870a-b4e7fddd9eba.png"),
         (
             "TEST1234.jpeg",
-            "recipes/test/fish/a596b366-befa-42d1-870a-b4e7fddd9eba.jpeg",
+            "recipes/test/a596b366-befa-42d1-870a-b4e7fddd9eba.jpeg",
         ),
     ],
 )

@@ -47,10 +47,10 @@ def user_photo_upload_to(instance: Any, filename: str) -> str:
 
 def recipe_photo_upload_to(instance: Any, filename: str) -> str:
     """
-    Save recipe photo in the folder - media/recipes/<filename>
+    Save recipe photo in the folder - media/recipes/<username>/<filename>
     """
     ext = os.path.splitext(filename)[1].lower()
-    return f"recipes/{instance.user.username}/{instance.slug}/{uuid.uuid4()}{ext}"
+    return f"recipes/{instance.user.username}/{uuid.uuid4()}{ext}"
 
 
 def validate_ingredients_format(value: str) -> str:

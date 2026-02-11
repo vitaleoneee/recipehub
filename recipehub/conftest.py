@@ -23,6 +23,11 @@ MODERATION_STATUS_IN_PROCESS = "in_process"
 MODERATION_STATUS_REJECTED = "rejected"
 
 
+@pytest.fixture(autouse=True)
+def media_root(settings, tmp_path):
+    settings.MEDIA_ROOT = tmp_path
+
+
 @pytest.fixture
 def valid_signup_data() -> Dict[str, str]:
     """Basic valid data for user registration."""

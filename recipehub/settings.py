@@ -1,6 +1,9 @@
+import os
 from pathlib import Path
-from decouple import config
 
+from dotenv import load_dotenv
+
+load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -8,15 +11,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config("SECRET_KEY")
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
-SITE_URL = config("SITE_URL")
+SITE_URL = os.environ.get("SITE_URL")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-DEBUG = True
+DEBUG = os.environ.get("DEBUG", "False").lower() in ("true", "1", "yes")
 
-ALLOWED_HOSTS = ["testserver", "127.0.0.1"]
+ALLOWED_HOSTS = [
+    host.strip()
+    for host in os.environ.get("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
+]
 
 INTERNAL_IPS = ["127.0.0.1"]
 
@@ -30,10 +36,6 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    # Registration of manual applications
-    "recipehub.apps.recipes.apps.RecipesConfig",
-    "recipehub.apps.users.apps.UsersConfig",
-    "recipehub.apps.reviews.apps.ReviewsConfig",
     # Other
     "django_cleanup.apps.CleanupConfig",
     "widget_tweaks",
@@ -43,11 +45,13 @@ INSTALLED_APPS = [
     "django_filters",
     "drf_spectacular",
     "drf_spectacular_sidecar",
-    "debug_toolbar",
+    # Registration of manual applications
+    "recipehub.apps.recipes.apps.RecipesConfig",
+    "recipehub.apps.users.apps.UsersConfig",
+    "recipehub.apps.reviews.apps.ReviewsConfig",
 ]
 
 MIDDLEWARE = [
-    "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -57,6 +61,10 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "allauth.account.middleware.AccountMiddleware",
 ]
+
+if DEBUG:
+    INSTALLED_APPS += ["debug_toolbar"]
+    MIDDLEWARE = ["debug_toolbar.middleware.DebugToolbarMiddleware"] + MIDDLEWARE
 
 ROOT_URLCONF = "recipehub.urls"
 
@@ -84,18 +92,19 @@ WSGI_APPLICATION = "recipehub.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": config("DB_NAME"),
-        "USER": config("DB_USER"),
-        "PASSWORD": config("DB_PASSWORD"),
-        "HOST": config("DB_HOST"),
-        "PORT": config("DB_PORT"),
+        "NAME": os.environ.get("DB_NAME"),
+        "USER": os.environ.get("DB_USER"),
+        "PASSWORD": os.environ.get("DB_PASSWORD"),
+        "HOST": os.environ.get("DB_HOST"),
+        "PORT": os.environ.get("DB_PORT"),
     }
 }
 
+REDIS_HOST = os.environ.get("REDIS_HOST", "redis")
 CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.redis.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379",
+        "LOCATION": f"redis://{REDIS_HOST}:6379",
     }
 }
 
@@ -142,6 +151,7 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
@@ -150,8 +160,8 @@ EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = config("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
 DEFAULT_FROM_EMAIL = "RecipeHub"
 
 JAZZMIN_SETTINGS = {
