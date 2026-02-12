@@ -1,0 +1,54 @@
+services:
+  web:
+    build: .
+    image: recipe-hub
+    container_name: recipe-hub-web
+    volumes:
+      - static_volume:/usr/src/recipehub/staticfiles
+      - media_volume:/usr/src/recipehub/media
+    restart: unless-stopped
+    env_file:
+      - .env
+
+  db:
+    image: postgres:17.7-bookworm
+    container_name: recipe-hub-db
+    restart: unless-stopped
+    volumes:
+      - data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+
+  redis:
+    image: redis:7.2-bookworm
+    container_name: recipe-hub-redis
+    restart: unless-stopped
+
+  celery:
+    build: .
+    command: celery -A recipehub worker --loglevel=info
+    container_name: recipe-hub-celery
+    depends_on:
+      - redis
+      - db
+    env_file:
+      - .env
+
+  nginx:
+    image: nginx:latest
+    container_name: recipe-hub-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - static_volume:/usr/share/nginx/html/staticfiles
+      - media_volume:/usr/share/nginx/html/media
+    depends_on:
+      - web
+
+volumes:
+  data:
+  static_volume:
+  media_volume:
