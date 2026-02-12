@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, re_path
 from allauth.account import views as allauth_views
 
 from recipehub.apps.users import views
@@ -24,8 +24,8 @@ urlpatterns = [
         allauth_views.PasswordResetDoneView.as_view(),
         name="account_reset_password_done",
     ),
-    path(
-        "password/reset/key/<uidb36>-<key>/",
+    re_path(
+        r"^password/reset/key/(?P<uidb36>[0-9A-Za-z]+)-(?P<key>.+)/$",
         allauth_views.PasswordResetFromKeyView.as_view(),
         name="account_reset_password_from_key",
     ),
