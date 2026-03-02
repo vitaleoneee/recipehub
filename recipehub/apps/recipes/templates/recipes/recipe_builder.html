@@ -8,7 +8,7 @@
 {% block content %}
     <div class="card shadow-sm">
         <div class="card-header btn-orange text-white">
-            <h3 class="mb-0">
+            <h3>
                 <i class="fa-solid fa-magic-wand-sparkles me-2"></i>Recipe Builder
             </h3>
             <p class="mb-0 small">Find recipes based on ingredients you have!</p>
@@ -47,7 +47,7 @@
                 <h5 class="mb-3">
                     <i class="fa-solid fa-basket-shopping me-2"></i>Your Ingredients
                 </h5>
-                <div id="ingredientsContainer" class="d-flex flex-wrap gap-2 p-3 bg-light rounded min-height-100">
+                <div id="ingredientsContainer" class="d-flex flex-wrap gap-2 p-2 bg-light rounded">
                     {% if ingredients %}
                         {% for ingredient in ingredients %}
                             <span class="ingredient-chip">
@@ -85,7 +85,6 @@
                     </button>
                 </form>
             </div>
-
         </div>
     </div>
 {% endblock content %}

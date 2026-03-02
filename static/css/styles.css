@@ -1,3 +1,7 @@
+:root {
+    --light-orange: #f79f4d;
+}
+
 .navbar-brand.logo {
     color: #ff6b00;
     text-decoration: none;
@@ -5,35 +9,27 @@
 }
 
 .navbar-brand.logo:hover {
-    color: #f79f4d;
+    color: var(--light-orange);
 }
 
 .dropdown-item:active,
 .dropdown-item.active {
     color: #fff !important;
-    background-color: #f79f4d !important;
+    background-color: var(--light-orange) !important;
 }
 
 .sidebar {
     background: #f8f9fa;
     border: 1px solid #dee2e6;
-    border-radius: 0.5rem;
-    padding: 1rem;
+    border-radius: 8px;
+    padding: 16px;
 }
 
 .sidebar-block {
     background: #ffffff;
     border: 1px solid #dee2e6;
-    border-radius: 0.5rem;
-    padding: 1rem;
-    margin-bottom: 1rem;
-}
-
-.sidebar-block .card {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    overflow: hidden;
+    border-radius: 8px;
+    padding: 10px 16px;
 }
 
 .sidebar-block .card img {
@@ -41,35 +37,22 @@
     height: 150px;
     object-fit: cover;
     object-position: center;
-    border-top-left-radius: 0.5rem;
-    border-top-right-radius: 0.5rem;
-}
-
-.sidebar-block .card-body {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    text-align: center;
-    padding: 0.5rem;
-}
-
-.sidebar-block .card-body h6 {
-    font-size: 0.9rem;
-    margin-bottom: 0.5rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
 }
 
 .sidebar-block .card-body .btn {
-    font-size: 0.75rem;
-    padding: 0.25rem 0.5rem;
+    font-size: 12px;
 }
 
+.block-header {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+}
 
 .btn-orange {
-    background-color: #f79f4d;
+    background-color: var(--light-orange);
     color: white;
     border: none;
     transition: all 0.2s ease;
@@ -89,7 +72,7 @@
 
 .pagination .page-item.active .page-link {
     border: none;
-    background-color: #f79f4d;
+    background-color: var(--light-orange);
     color: #fff;
 }
 
@@ -110,13 +93,6 @@
     height: 100px;
     object-fit: cover;
     border-radius: 50%;
-}
-
-.btn-orange {
-    background-color: #f79f4d;
-    color: white;
-    border: none;
-    transition: all 0.2s ease;
 }
 
 .ingredient-chip {
@@ -140,4 +116,30 @@
     width: 48px;
     height: 48px;
     object-fit: cover;
+}
+
+@media (max-width: 992px) {
+    .navbar-collapse {
+        text-align: center;
+    }
+
+    .navbar-collapse form,
+    .unlogged {
+        justify-content: center;
+        margin: 10px 0;
+    }
+
+    .navbar-collapse .form-control {
+        max-width: 200px;
+    }
+
+    .dropdown-menu {
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        right: auto !important;
+    }
+}
+
+.test {
+    border: 1px solid red;
 }

@@ -6,7 +6,7 @@
 {% endblock title %}
 
 {% block content %}
-    <h2 class="mb-4">My Saved Recipes</h2>
+    <h2 class="mb-4 block-header text-center">My Saved Recipes</h2>
 
     {% if saved_recipes %}
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2 g-4">
@@ -48,6 +48,10 @@
                             {% if saved.recipe.announcement_text %}
                                 <p class="mt-2">{{ saved.recipe.announcement_text|truncatewords:20 }}</p>
                             {% endif %}
+                            <a href="{{ saved.recipe.get_absolute_url }}"
+                               class="btn btn-sm btn-orange ms-0 ms-sm-2 mt-2 mt-sm-0">
+                                View recipe
+                            </a>
                         </div>
                     </div>
                 </div>
